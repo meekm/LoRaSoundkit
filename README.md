@@ -12,6 +12,7 @@
 ## General
 
 This Soundkit sensor measures continuously audible sound by analyzing the data using FFT. The results are send each minute to the LoRa network. The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Also each minute the average and peak levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
+
 ![alt Apeldoorn Sounds Kit](images/soundkit.jpg "Sounds Kit")
 
 ## Electronic components assembly
@@ -60,11 +61,11 @@ Copy the two files “arduinoFFT.h” and arduinoFFT.ccp” to your .ino main di
 
 Make sure that the pin to I2S interface are set correctly (in file nois9lora.ino)
 ```
-// define IO pins Sparkfun for I2S for MEMS microphone
-#define BCKL 18
-#define LRCL 23
-#define NOT_USED -1
-#define DOUT 19
+	// define IO pins Sparkfun for I2S for MEMS microphone
+	#define BCKL 18
+	#define LRCL 23
+	#define NOT_USED -1
+	#define DOUT 19
 ```
 Make sure for that the PIN configuration for the LoRa LMIC are set correctly (lora.h)
 These pins are wired internaly on the Sparkfun board.
@@ -82,10 +83,10 @@ The device address and keys have to be set to the ones generated in the TTN cons
 Choose activation mode OTAA and get the APPEUI, DEVEUI and APPKEY keys.
 Specify the keys in the file lora.h
 ```
-// specify here TTN keys 
-#define APPEUI "70BAA57ED002DA53"
-#define DEVEUI "0000000000000001"
-#define APPKEY "049CCC7976E5CC3C802CBCF28F1082AE"
+	// specify here TTN keys 
+	#define APPEUI "70BAA57ED002DA53"
+	#define DEVEUI "0000000000000001"
+	#define APPKEY "049CCC7976E5CC3C802CBCF28F1082AE"
 ```
 ## Payload Interface
 A Lora message is max 50 bytes. In total 33 values are sent in one message. Therfore each value is compressed in an integer of 12 bits.  
@@ -94,8 +95,6 @@ One upload message contains 3 times (for dBA, dBC and dbZ) the peak value, avera
  31.5Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz and 8kHz
 
 The TTN payload decoder produces the following JSON message:
-```
-
 ```
 {
   "la": {
@@ -144,7 +143,7 @@ The TTN payload decoder produces the following JSON message:
     ]
   }
 }
-
+```
 ## Example graphical output Sound Kit
 Below a graph of a sound measurement in my living room in dB(Z).
 In this graph some remarkable items are vissible:
