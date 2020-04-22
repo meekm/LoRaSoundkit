@@ -1,11 +1,11 @@
 ## LoRaSoundkit
-** Open source (hardware) sound level meter for the internet of things.**
+**Open source (hardware) sound level meter for the internet of things.**
 
 * [General](#General)
 * [Electronic components assembly](#electronic-components-assembly)
 * [Board configuration](#Board-configuration)
 * [Libraries](#Libraries)
-* [LoRa TTN keys(#LoRa-TTN-keys)
+* [LoRa TTN keys](#LoRa-TTN-keys)
 * [Payload Interface](#Payload-Interface)
 * [Example graphical output Sound Kit](#Example-graphical-output-Sound-Kit)
 
@@ -39,14 +39,15 @@ For sound measurements lower then 30 dB, the supply to the MEMS microphone must 
 
 ## Board configuration
 
-* Install ESP32 Arduino Core
+Install ESP32 Arduino Core
 Add the line in Arduino→preferences→Additional Boardsmanagers URL:
 
 ```
 https://dl.espressif.com/dl/package_esp32_index.json
 ```
 Restart Arduino environment.
-* In the Arduino menu Tools→Boards, choose Sparkfun Lora gateway board.
+
+In the Arduino menu Tools→Boards, choose Sparkfun Lora gateway board.
 If not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino  
 
 ## Libraries
@@ -154,6 +155,7 @@ In this graph some remarkable items are vissible:
 ![alt Example output](images/grafana.png "Example output")
 
 The green blocks shows the average spectrum levels.
+
 This graph is made with Nodered, InfluxDb and Grafana.
 
 
