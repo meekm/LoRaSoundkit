@@ -43,7 +43,7 @@ Install ESP32 Arduino Core
 Add the line in Arduino→preferences→Additional Boardsmanagers URL:
 
 ```
-https://dl.espressif.com/dl/package_esp32_index.json
+	https://dl.espressif.com/dl/package_esp32_index.json
 ```
 Restart Arduino environment.
 
@@ -85,9 +85,9 @@ Choose activation mode OTAA and get the APPEUI, DEVEUI and APPKEY keys.
 Specify the keys in the file lora.h
 ```
 	// specify here TTN keys 
-	#define APPEUI "70BAA57ED002DA53"
+	#define APPEUI "0001020304050607"
 	#define DEVEUI "0000000000000001"
-	#define APPKEY "049CCC7976E5CC3C802CBCF28F1082AE"
+	#define APPKEY "000102030405060708090A0B0C0D0E0F"
 ```
 ## Payload Interface
 A Lora message is max 50 bytes. In total 33 values are sent in one message. Therfore each value is compressed in an integer of 12 bits.  
