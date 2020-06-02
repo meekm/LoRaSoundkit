@@ -163,7 +163,7 @@ void onEvent (ev_t ev) {
         for( int i = 0; i < downlinkDataSize; i++){
           downlinkData[i] = LMIC.frame[LMIC.dataBeg+i];
         }
-        downlinkData[downlinkDataSize] = '\0';    // MM append zero char
+        downlinkData[downlinkDataSize] = '\0';    // MM append string terminator
         // MM callback added
         if( _callback != NULL) {
           _callback( downlinkPort, downlinkData, downlinkDataSize);
