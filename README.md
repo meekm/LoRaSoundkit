@@ -23,7 +23,7 @@ Components:
 * antenna ¼ lambda, e.g a wire of 8.4 cm length
 * power adapter 5V, 0,5A
 
-Below the wiring from MEMS microphone (SPH0645 or NMP443) to processor board (Sparkfun or TTGO):
+The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and the processor board (Sparkfun or TTGO):
 | SPH0645 | NMP442 |  |Sparkfun| TTGO |
 | ------- | ------ |--|--------|-------|
 | 3V | 3V | <--> | 3V | 3V |
@@ -33,7 +33,7 @@ Below the wiring from MEMS microphone (SPH0645 or NMP443) to processor board (Sp
 | LRCL |  | <--> | 23 |  |
 | SEL |  | nc |   |  |
 
-**N.B.**
+**N.B.**<br>
 For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
 
 ## Board configuration
@@ -48,12 +48,12 @@ In the Arduino menu Tools→Boards, choose Sparkfun Lora gateway board.
 If not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino  
 
 ## Libraries
-**LMIC**
+**LMIC**<br>
 Install LMIC library from Matthys Kooijman (I did not use the advised LMIC from MCCI-Catena, because it uses US settings).
 Download https://github.com/matthijskooijman/arduino-lmic 
 and put it in your <arduino-path>\libraries\
 
-**Arduino FFT**
+**Arduino FFT**<br>
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
 Copy the two files “arduinoFFT.h” and arduinoFFT.ccp” to your .ino main directory
 
