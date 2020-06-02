@@ -31,8 +31,8 @@ The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and
 | BCLK | SCK | <--> | 18 |  13 |
 | DOUT | SD | <--> | 19 |  35 |
 | LRCL | WS  | <--> | 23 |  12 |
-| SEL | LR  | GND |   |   |
-| SEL |     |  nc |   |   |
+|      | LR  | GND |   |   |
+| SEL  |     |  nc |   |   |
 
 **N.B.**<br>
 For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
