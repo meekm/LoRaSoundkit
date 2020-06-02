@@ -50,7 +50,6 @@ const uint8_t  DOWNLINK_DATA_SIZE = 52;             ///< Maximum payload size (n
 
 static bool    txBusy {false};
 
-static bool    downlink {false};                    ///< flag to indicatie that downlink dat is available.
 static uint8_t downlinkPort {0};                   ///< used uplink port
 static uint8_t downlinkData[DOWNLINK_DATA_SIZE] {};  ///< uplink data
 static uint8_t downlinkDataSize {0};
@@ -104,9 +103,6 @@ void LoRa::sendMsg(int port, uint8_t* buf, int len){
 
 void LoRa::process() {
   os_runloop_once();
-  if(downlink){
-    captureDownlinkData();
-  }
 }
 
 void LoRa::receiveHandler( void (*callback)(unsigned int, uint8_t*, unsigned int)) {
@@ -163,7 +159,6 @@ void onEvent (ev_t ev) {
       if (LMIC.dataLen != 0){
         printf("Received %d bytes of payload\n", LMIC.dataLen);
         downlinkDataSize = LMIC.dataLen;
-        downlink = true;
         downlinkPort = LMIC.frame[LMIC.dataBeg-1];
         for( int i = 0; i < downlinkDataSize; i++){
           downlinkData[i] = LMIC.frame[LMIC.dataBeg+i];
