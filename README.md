@@ -16,26 +16,21 @@ This Soundkit sensor measures continuously audible sound by analyzing the data u
 ![alt Apeldoorn Sounds Kit](images/soundkit.jpg "Sounds Kit")
 
 ## Electronic components assembly
-The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
+The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.<br>
 Components:
 * Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or LilyGO TTGO LoRa32 868MHz ESP32
 * I2S MEMS microphone SPH046 or I2S MEMS microphone NMP441
 * antenna ¼ lambda, e.g a wire of 8.4 cm length
 * power adapter 5V, 0,5A
 
-```
-+---------+     +-------------+  
-| SPH0645 |     | Sparkfun    |  \|/  
-+---------+     +-------------+   |  
-| 3V      | <-> | 3V      ant | --+
-| GND     | <-> | GND         |
-| BCLK    | <-> | 18          |
-| DOUT    | <-> | 19          |
-| LRCL    | <-> | 23          |
-| SEL     | nc  |             |
-+---------+     |             |
-                +-------------+
-```
+| SPH0645 | NMP442 |  |Sparkfun| TTGO |
+| ------- | ------ |--|--------|-------|
+| 3V | 3V | <--> | 3V | 3V |
+| GND | GND | <--> | GND | GND|
+| BCLK |  | <--> | 18 |  |
+| DOUT |  | <--> | 19 |  |
+| LRCL |  | <--> | 23 |  |
+| SEL |  | nc |   |  |
 
 **N.B.**
 For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
