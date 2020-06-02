@@ -23,6 +23,7 @@ Components:
 * antenna ¼ lambda, e.g a wire of 8.4 cm length
 * power adapter 5V, 0,5A
 
+Below the wiring from MEMS microphone (SPH0645 or NMP443) to processor board (Sparkfun or TTGO):
 | SPH0645 | NMP442 |  |Sparkfun| TTGO |
 | ------- | ------ |--|--------|-------|
 | 3V | 3V | <--> | 3V | 3V |
@@ -36,10 +37,8 @@ Components:
 For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
 
 ## Board configuration
-
 Install ESP32 Arduino Core
 Add the line in Arduino→preferences→Additional Boardsmanagers URL:
-
 ```
 	https://dl.espressif.com/dl/package_esp32_index.json
 ```
@@ -49,96 +48,87 @@ In the Arduino menu Tools→Boards, choose Sparkfun Lora gateway board.
 If not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino  
 
 ## Libraries
-LMIC
+**LMIC**
 Install LMIC library from Matthys Kooijman (I did not use the advised LMIC from MCCI-Catena, because it uses US settings).
 Download https://github.com/matthijskooijman/arduino-lmic 
 and put it in your <arduino-path>\libraries\
 
-Arduino FFT
+**Arduino FFT**
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
 Copy the two files “arduinoFFT.h” and arduinoFFT.ccp” to your .ino main directory
 
-Make sure that the pin to I2S interface are set correctly (in file nois9lora.ino)
+## Config file
+In the config,h file the processor board is defined either Sparkfun or TTGO
 ```
-	// define IO pins Sparkfun for I2S for MEMS microphone
-	#define BCKL 18
-	#define LRCL 23
-	#define NOT_USED -1
-	#define DOUT 19
+//#define _SPARKFUN         // uncomment if SParkfun board
+#define _TTGO               // uncomment if TTGO board
 ```
-Make sure for that the PIN configuration for the LoRa LMIC are set correctly (lora.h)
-These pins are wired internaly on the Sparkfun board.
+The cycle count, how often a measurement is sent to the thingsnetwork in msec.:
 ```
-	// define RFM 95 pins
-	#define NSS 16
-	#define RXTX LMIC_UNUSED_PIN
-	#define RST 5
-	#define DIO1 26
-	#define DIO2 33
-	#define DIO3 32
+#define CYCLECOUNT   60000 
 ```
-## LoRa TTN keys
+**LoRa TTN keys**
 The device address and keys have to be set to the ones generated in the TTN console. Login in the TTN console and add your device.
-Choose activation mode OTAA and get the APPEUI, DEVEUI and APPKEY keys.
-Specify the keys in the file lora.h
+Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into this config file:
 ```
-	// specify here TTN keys 
-	#define APPEUI "0001020304050607"
-	#define DEVEUI "0000000000000001"
-	#define APPKEY "000102030405060708090A0B0C0D0E0F"
+#define APPEUI "0000000000000000"
+#define DEVEUI "0000000000000000"
+#define APPKEY "00000000000000000000000000000000"
 ```
 ## Payload Interface
-A Lora message is max 50 bytes. In total 33 values are sent in one message. Therfore each value is compressed in an integer of 12 bits.  
+A LoRa payload message length is max 50 bytes, therefore the message is compressed into values of 12 bits. The payload decoder converts the payload to a JSON message.
 
-One upload message contains 3 times (for dBA, dBC and dbZ) the peak value, average value and the spectrum. The spectrum contains the dB values for the following frequency bands:
- 31.5Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz and 8kHz
+One upload message contains the minimum, maximum and average level for a measurment and the 9 octaves spectrum values. This is done for the weigting curves dB(A), dB(C) and db(Z).
+The spectrum contains the dB values for the octave bands 31.5Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz and 8kHz
 
 The TTN payload decoder produces the following JSON message:
 ```
-{
   "la": {
-    "avg": 42.6,
-    "peak": 54.9,
+    "avg": 44.2,
+    "max": 50.4,
+    "min": 39.8,
     "spectrum": [
-      -13,
-      5.8,
-      26.9,
-      35.8,
-      35.9,
-      34.7,
-      33.8,
-      32.5,
-      31
+      22.2,
+      30.4,
+      37.1,
+      36,
+      35,
+      35.3,
+      34.3,
+      37.4,
+      30.5
     ]
   },
   "lc": {
-    "avg": 48.5,
-    "peak": 64.3,
+    "avg": 61.3,
+    "max": 72.5,
+    "min": 49.5,
     "spectrum": [
-      23.3,
-      31.2,
-      42.8,
-      44.4,
-      39.1,
-      34.7,
-      32.8,
-      31.8,
-      29.1
+      58.6,
+      55.8,
+      53,
+      44.6,
+      38.2,
+      35.3,
+      33.3,
+      36.6,
+      28.6
     ]
   },
   "lz": {
-    "avg": 48.7,
-    "peak": 64.4,
+    "avg": 63.4,
+    "max": 75.1,
+    "min": 50.3,
     "spectrum": [
-      26.3,
-      32,
-      43,
-      44.4,
-      39.1,
-      34.7,
-      32.6,
-      31.5,
-      32.1
+      61.6,
+      56.6,
+      53.2,
+      44.6,
+      38.2,
+      35.3,
+      33.1,
+      36.4,
+      31.6
     ]
   }
 }
