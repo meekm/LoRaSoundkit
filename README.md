@@ -11,14 +11,17 @@
 
 ## General
 
-This Soundkit sensor measures continuously audible sound by analyzing the data using FFT. The results are send each minute to the LoRa network. The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Also each minute the average and peak levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
+This Soundkit sensor measures continuously audible sound by analyzing the data using FFT. The results are send each minute to the LoRa network. The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Also each minute the average, minimum and maximum levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
 
 ![alt Apeldoorn Sounds Kit](images/soundkit.jpg "Sounds Kit")
 
 ## Electronic components assembly
-* Sparkfun Lora Gateway 1-channel (ESP32), used as LoRa Sensor
-* I2S MEMS microphone SPH046 or NMP441
+The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
+Components:
+* Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or LilyGO TTGO LoRa32 868MHz ESP32
+* I2S MEMS microphone SPH046 or I2S MEMS microphone NMP441
 * antenna ¼ lambda, e.g a wire of 8.4 cm length
+* power adapter 5V, 0,5A
 
 ```
 +---------+     +-------------+  
@@ -35,7 +38,7 @@ This Soundkit sensor measures continuously audible sound by analyzing the data u
 ```
 
 **N.B.**
-For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V supply.
+For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
 
 ## Board configuration
 
