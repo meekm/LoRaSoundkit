@@ -5,7 +5,7 @@
 * [Electronic components assembly](#electronic-components-assembly)
 * [Board configuration](#Board-configuration)
 * [Libraries](#Libraries)
-* [LoRa TTN keys](#LoRa-TTN-keys)
+* [Config file](#Config-file)
 * [Payload Interface](#Payload-Interface)
 * [Example graphical output Sound Kit](#Example-graphical-output-Sound-Kit)
 
@@ -17,7 +17,7 @@ This Soundkit sensor measures continuously audible sound by analyzing the data u
 
 ## Electronic components assembly
 The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.<br>
-Components:
+**Components**
 * Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or LilyGO TTGO LoRa32 868MHz ESP32
 * I2S MEMS microphone SPH046 or I2S MEMS microphone NMP441
 * antenna ¼ lambda, e.g a wire of 8.4 cm length
@@ -28,9 +28,9 @@ The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and
 | ------- | ------ |--|--------|-------|
 | 3V | 3V | <--> | 3V | 3V |
 | GND | GND | <--> | GND | GND|
-| BCLK |  | <--> | 18 |  |
-| DOUT |  | <--> | 19 |  |
-| LRCL |  | <--> | 23 |  |
+| BCLK |  | <--> | 18 |  13 |
+| DOUT |  | <--> | 19 |  35 |
+| LRCL |  | <--> | 23 |  12 |
 | SEL |  | nc |   |  |
 
 **N.B.**<br>
@@ -67,7 +67,7 @@ The cycle count, how often a measurement is sent to the thingsnetwork in msec.:
 ```
 #define CYCLECOUNT   60000 
 ```
-**LoRa TTN keys**
+**LoRa TTN keys**<br>
 The device address and keys have to be set to the ones generated in the TTN console. Login in the TTN console and add your device.
 Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into this config file:
 ```
@@ -76,7 +76,7 @@ Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into thi
 #define APPKEY "00000000000000000000000000000000"
 ```
 ## Payload Interface
-A LoRa payload message length is max 50 bytes, therefore the message is compressed into values of 12 bits. The payload decoder converts the payload to a JSON message.
+A LoRa payload is a binary message wiht a mximum lenth of 50 bytes, therefore the message is compressed into values of 12 bits. The payload decoder converts the binary message to a JSON message.
 
 One upload message contains the minimum, maximum and average level for a measurment and the 9 octaves spectrum values. This is done for the weigting curves dB(A), dB(C) and db(Z).
 The spectrum contains the dB values for the octave bands 31.5Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz and 8kHz
