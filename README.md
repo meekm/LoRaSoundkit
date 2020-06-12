@@ -6,7 +6,7 @@
 * [Board configuration](#Board-configuration)
 * [Libraries](#Libraries)
 * [Config file](#Config-file)
-* [Payload Interface](#Payload-Interface)
+* [Specification](#Specification)
 * [Example graphical output Sound Kit](#Example-graphical-output-Sound-Kit)
 
 ## General
@@ -82,13 +82,30 @@ Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into thi
 #define DEVEUI "0000000000000000"
 #define APPKEY "00000000000000000000000000000000"
 ```
-## Payload Interface
-A LoRa payload is a binary message with a limit of max. 51 bytes.  To send all paramters the message is compressed. 16 bit values are compress to 12 bits. The TTN payload decoder converts the binary message to a readable JSON message.
 
-One upload message contains the minimum, maximum and average dB level for a measurment and the 9 octaves spectrum values. This is done for the weigting curves dB(A), dB(C) and db(Z).
-The spectrum contains the dB values for the octave bands 31.5Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz and 8kHz
+## Specification
+#### Sound Measuerment
+* sample frequency  MEMS microphone 22.628 khz
+* 18 bits per sample 
+* soundbuffer 4096 samples
+* FFT bands in bins of 11 Hz (22628 / 2048)
+* measurement cycle time 90 msec
+* one measurement contains
+  * spectrum 31.5Hz, 63Hz, 123Hz, 250Hz, 500 Hz, 1kHz, 2kHz, 4kHz and 8kHz
+  * average, maximum and minimum level
 
-The TTN payload decoder produces the following JSON message:
+#### Interface
+Every minute a message is composed from all measurements done in one minute, which contains the following values in dB.
+* 9 spectrum levels for dB(A)
+* 9 spectrum levels for dB(C)
+* 9 spectrum levels for dB(Z)
+* min, max, and average levels for dB(A)
+* min, max, and average levels for dB(C)
+* min, max, and average levels for dB(Z)
+
+The message is send in a compressed binary format to TTN. The TTN payload decoder converts the messsage to a readable JSON message.
+
+#### Example of a JSON message:
 ```
   "la": {
     "avg": 44.2,
