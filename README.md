@@ -1,5 +1,5 @@
 ## LoRaSoundkit
-#### Open source (hardware) sound level meter for the internet of things.**
+#### Open source (hardware) sound level meter for the internet of things.
 
 * [General](#General)
 * [Electronic components assembly](#electronic-components-assembly)
@@ -32,12 +32,12 @@ The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has 
 The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and the processor board (Sparkfun or TTGO):
 | SPH0645 | NMP442 |  |Sparkfun| TTGO |
 | ------- | ------ |--|--------|-------|
-| 3V | 3V | <--> | 3V | 3V |
-| GND | GND | <--> | GND | GND|
-| BCLK | SCK | <--> | GPIO18 |  GPIO13 |
-| DOUT | SD | <--> | GPIO19 |  GPIO35 |
-| LRCL | WS  | <--> | GPIO23 |  GPIOGPIO12 |
-|      | LR  | GND |   |   |
+| 3V | 3V |  <--> | 3V | 3V |
+| GND | GND |  <--> | GND | GND|
+| BCLK | SCK |  <--> | GPIO18 | GPIO13 |
+| DOUT | SD |  <--> | GPIO19 | GPIO35 |
+| LRCL | WS  |  <--> | GPIO23 | GPIO12 |
+|      | LR  |  GND |   |   |
 | SEL  |     |  not connected |   |   |
 
 #### N.B.
