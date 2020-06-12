@@ -14,9 +14,11 @@
 This Soundkit sensor measures continuously audible sound by analyzing the data using FFT. The results are send each minute to the LoRa network. The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Also each minute the average, minimum and maximum levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
 
 <img src="images/soundkit.jpg" alt="Sound Kit Sparkfun board" width="200"/>
+
 > Sound Kit Sparkfun board
 
-<img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="200"/>
+<img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="300"/>
+
 > Sound Kit TTGO board
 
 ## Electronic components assembly
