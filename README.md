@@ -1,5 +1,5 @@
 ## LoRaSoundkit
-**Open source (hardware) sound level meter for the internet of things.**
+#### Open source (hardware) sound level meter for the internet of things.**
 
 * [General](#General)
 * [Electronic components assembly](#electronic-components-assembly)
@@ -22,8 +22,8 @@ This Soundkit sensor measures continuously audible sound by analyzing the data u
 > Sound Kit TTGO board
 
 ## Electronic components assembly
-The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.<br>
-**Components**
+The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
+#### Components
 * Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or LilyGO TTGO LoRa32 868MHz ESP32
 * I2S MEMS microphone SPH046 or I2S MEMS microphone NMP441
 * antenna ¼ lambda, e.g a wire of 8.4 cm length
@@ -34,13 +34,13 @@ The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and
 | ------- | ------ |--|--------|-------|
 | 3V | 3V | <--> | 3V | 3V |
 | GND | GND | <--> | GND | GND|
-| BCLK | SCK | <--> | 18 |  13 |
-| DOUT | SD | <--> | 19 |  35 |
-| LRCL | WS  | <--> | 23 |  12 |
+| BCLK | SCK | <--> | GPIO18 |  GPIO13 |
+| DOUT | SD | <--> | GPIO19 |  GPIO35 |
+| LRCL | WS  | <--> | GPIO23 |  GPIOGPIO12 |
 |      | LR  | GND |   |   |
-| SEL  |     |  nc |   |   |
+| SEL  |     |  not connected |   |   |
 
-**N.B.**<br>
+#### N.B.
 For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
 
 ## Board configuration
@@ -55,12 +55,13 @@ In the Arduino menu Tools→Boards, choose Sparkfun Lora gateway board.
 If not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino  
 
 ## Libraries
-**LMIC**<br>
+
+#### LMIC
 Install LMIC library from Matthys Kooijman (I did not use the advised LMIC from MCCI-Catena, because it uses US settings).
 Download https://github.com/matthijskooijman/arduino-lmic 
 and put it in your <arduino-path>\libraries\
 
-**Arduino FFT**<br>
+#### Arduino FFT
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
 Copy the two files “arduinoFFT.h” and arduinoFFT.ccp” to your .ino main directory
 
@@ -74,7 +75,7 @@ The cycle count, how often a measurement is sent to the thingsnetwork in msec.:
 ```
 #define CYCLECOUNT   60000 
 ```
-**LoRa TTN keys**<br>
+#### LoRa TTN keys
 The device address and keys have to be set to the ones generated in the TTN console. Login in the TTN console and add your device.
 Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into this config file:
 ```
@@ -84,10 +85,11 @@ Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into thi
 ```
 
 ## Specification
+
 #### Sound Measuerment
 * sample frequency  MEMS microphone 22.628 khz
 * 18 bits per sample 
-* soundbuffer 4096 samples
+* soundbuffer 2048 samples
 * FFT bands in bins of 11 Hz (22628 / 2048)
 * measurement cycle time 90 msec
 * one measurement contains
