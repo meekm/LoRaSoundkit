@@ -14,7 +14,9 @@
 This Soundkit sensor measures continuously audible sound by analyzing the data using FFT. The results are send each minute to the LoRa network. The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Also each minute the average, minimum and maximum levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
 
 ![alt Apeldoorn Sounds Kit](images/soundkit.jpg "Sound Kit Sparkfun board")
+> Sound Kit Sparkfun board
 ![alt Apeldoorn Sounds Kit](images/ttgo.jpg "Sound Kit TTGO board")
+> Sound Kit TTGO board
 
 ## Electronic components assembly
 The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.<br>
@@ -78,9 +80,9 @@ Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into thi
 #define APPKEY "00000000000000000000000000000000"
 ```
 ## Payload Interface
-A LoRa payload is a binary message wiht a mximum lenth of 50 bytes, therefore the message is compressed into values of 12 bits. The payload decoder converts the binary message to a JSON message.
+A LoRa payload is a binary message with a limit of max. 51 bytes.  To send all paramters the message is compressed. 16 bit values are compress to 12 bits. The TTN payload decoder converts the binary message to a readable JSON message.
 
-One upload message contains the minimum, maximum and average level for a measurment and the 9 octaves spectrum values. This is done for the weigting curves dB(A), dB(C) and db(Z).
+One upload message contains the minimum, maximum and average dB level for a measurment and the 9 octaves spectrum values. This is done for the weigting curves dB(A), dB(C) and db(Z).
 The spectrum contains the dB values for the octave bands 31.5Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz and 8kHz
 
 The TTN payload decoder produces the following JSON message:
@@ -136,16 +138,16 @@ The TTN payload decoder produces the following JSON message:
 }
 ```
 ## Example graphical output Sound Kit
-Below a graph of a sound measurement in my living room in dB(Z).
+Below a graph of a sound measurement in my living room in dB(A).
 In this graph some remarkable items are vissible:
-* blue line shows the peaks of the belling comtoise clock each half hour
-* visible noise of the dishing machine from 1:00 to 2:00
-* low noise of of the fridge, see the  63 Hz and 125 Hz line
+* blue line shows the max level of the belling comtoise clock each half hour
+* visible noise of the dishing machine from 0:30 to 1:30
+* noise of of the fridge the 125 Hz line
+* incrementing outside traffic (63 Hz) at 7.00
 
 ![alt Example output](images/grafana.png "Example output")
 
 The green blocks shows the average spectrum levels.
-
 This graph is made with Nodered, InfluxDb and Grafana.
 
 
