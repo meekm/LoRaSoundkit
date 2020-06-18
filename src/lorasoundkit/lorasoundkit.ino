@@ -32,10 +32,18 @@ static Measurement cMeasurement( cweighting);
 static Measurement zMeasurement( zweighting);
 
 long milliCount = -1;
+long cycleCount = CYCLECOUNT;
 
  // LoRa receive handler (downnlink)
  void loracallback( unsigned int port, unsigned char* msg, unsigned int len) {
-  printf("lora callback called port=%d len=%d msg=%s\n", port, len, msg);
+  printf("lora download message received port=%d len=%d\n", port, len);
+  if(port == 1) {
+    int value = msg[0] + 256 * msg[1];
+    if( value >= 10 && value <= 600) {
+       cycleCount = 1000 * value;
+       printf( "cycleCount changed to %d sec.\n" , value);
+    }
+  }
 }
 
 // Arduino set up
@@ -77,8 +85,8 @@ static void sendToTTN( Measurement& la, Measurement& lc, Measurement& lz) {
     i = add12bitsToBuf( payload, i, lz.spectrum[j] * 10.0);
   }
  
-  int len = i / 2 + (i % 2);
-  //printf( "messagelength=%d\n", len);
+  int len = i / 2 + 1;
+  printf( "messagelength=%d\n", len);
 
   if ( len > 50)   // max TTN message length
     printf( "message to big length=%d\n", len);
@@ -111,7 +119,7 @@ void loop(void) {
   zMeasurement.update( energy);
 
   // calculate average and send
-  if ( millis() - milliCount > CYCLECOUNT) {
+  if ( millis() - milliCount > cycleCount) {
     //printf("\n");
     milliCount = millis();
 
