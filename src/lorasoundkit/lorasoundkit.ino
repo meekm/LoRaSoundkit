@@ -34,10 +34,13 @@ static Measurement zMeasurement( zweighting);
 long milliCount = -1;
 long cycleCount = CYCLECOUNT;
 
- // LoRa receive handler (downnlink)
- void loracallback( unsigned int port, unsigned char* msg, unsigned int len) {
+// LoRa receive handler (downnlink)
+void loracallback( unsigned int port, unsigned char* msg, unsigned int len) {
   printf("lora download message received port=%d len=%d\n", port, len);
-  if(port == 1) {
+
+  // change cycle count in seconds with a remote TTN download command 
+  // port is 1, byte 0 is low byte 1 is high byte
+  if( port == 1 && len >=2) {
     int value = msg[0] + 256 * msg[1];
     if( value >= 10 && value <= 600) {
        cycleCount = 1000 * value;
