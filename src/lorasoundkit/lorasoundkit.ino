@@ -88,10 +88,10 @@ static void sendToTTN( Measurement& la, Measurement& lc, Measurement& lz) {
     i = add12bitsToBuf( payload, i, lz.spectrum[j] * 10.0);
   }
  
-  int len = i / 2 + 1;
-  printf( "messagelength=%d\n", len);
+  int len = i / 2 + (i % 2);
+  //printf( "messagelength=%d\n", len);
 
-  if ( len > 50)   // max TTN message length
+  if ( len > 51)   // max TTN message length
     printf( "message to big length=%d\n", len);
   lora.sendMsg( 20, payload, len );    // use port 20
   digitalWrite( LED_BUILTIN, LOW);
