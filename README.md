@@ -1,47 +1,51 @@
 ## LoRaSoundkit
-**Open source (hardware) sound level meter for the internet of things.**
+#### Open source (hardware) sound level meter for the internet of things.
 
 * [General](#General)
 * [Electronic components assembly](#electronic-components-assembly)
 * [Board configuration](#Board-configuration)
 * [Libraries](#Libraries)
-* [LoRa TTN keys](#LoRa-TTN-keys)
-* [Payload Interface](#Payload-Interface)
+* [Config file](#Config-file)
+* [Specification](#Specification)
 * [Example graphical output Sound Kit](#Example-graphical-output-Sound-Kit)
 
 ## General
 
-This Soundkit sensor measures continuously audible sound by analyzing the data using FFT. The results are send each minute to the LoRa network. The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Also each minute the average and peak levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
+This Soundkit sensor measures continuously audible sound by analyzing the data using FFT. The results are send each minute to the LoRa network. The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Also each minute the average, minimum and maximum levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
 
-![alt Apeldoorn Sounds Kit](images/soundkit.jpg "Sounds Kit")
+<img src="images/soundkit.jpg" alt="Sound Kit Sparkfun board" width="200"/>
+
+> Sound Kit Sparkfun board
+
+<img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="300"/>
+
+> Sound Kit TTGO board
 
 ## Electronic components assembly
-* Sparkfun Lora Gateway 1-channel (ESP32), used as LoRa Sensor
-* I2S MEMS microphone SPH046 or NMP441
+The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
+#### Components
+* Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or LilyGO TTGO LoRa32 868MHz ESP32
+* I2S MEMS microphone SPH046 or I2S MEMS microphone NMP441
 * antenna ¼ lambda, e.g a wire of 8.4 cm length
+* power adapter 5V, 0,5A
 
-```
-+---------+     +-------------+  
-| SPH0645 |     | Sparkfun    |  \|/  
-+---------+     +-------------+   |  
-| 3V      | <-> | 3V      ant | --+
-| GND     | <-> | GND         |
-| BCLK    | <-> | 18          |
-| DOUT    | <-> | 19          |
-| LRCL    | <-> | 23          |
-| SEL     | nc  |             |
-+---------+     |             |
-                +-------------+
-```
+The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and the processor board (Sparkfun or TTGO):
+| SPH0645 | NMP442 |  |Sparkfun| TTGO |
+| ------- | ------ |--|--------|-------|
+| 3V | 3V |  <--> | 3V | 3V |
+| GND | GND |  <--> | GND | GND|
+| BCLK | SCK |  <--> | GPIO18 | GPIO13 |
+| DOUT | SD |  <--> | GPIO19 | GPIO35 |
+| LRCL | WS  |  <--> | GPIO23 | GPIO12 |
+|      | LR  |  GND |   |   |
+| SEL  |     |  not connected |   |   |
 
-**N.B.**
-For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V supply.
+#### N.B.
+For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
 
 ## Board configuration
-
 Install ESP32 Arduino Core
 Add the line in Arduino→preferences→Additional Boardsmanagers URL:
-
 ```
 	https://dl.espressif.com/dl/package_esp32_index.json
 ```
@@ -51,111 +55,121 @@ In the Arduino menu Tools→Boards, choose Sparkfun Lora gateway board.
 If not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino  
 
 ## Libraries
-LMIC
+
+#### LMIC
 Install LMIC library from Matthys Kooijman (I did not use the advised LMIC from MCCI-Catena, because it uses US settings).
 Download https://github.com/matthijskooijman/arduino-lmic 
 and put it in your <arduino-path>\libraries\
 
-Arduino FFT
+#### Arduino FFT
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
 Copy the two files “arduinoFFT.h” and arduinoFFT.ccp” to your .ino main directory
 
-Make sure that the pin to I2S interface are set correctly (in file nois9lora.ino)
+## Config file
+In the config,h file the processor board is defined either Sparkfun or TTGO
 ```
-	// define IO pins Sparkfun for I2S for MEMS microphone
-	#define BCKL 18
-	#define LRCL 23
-	#define NOT_USED -1
-	#define DOUT 19
+//#define _SPARKFUN         // uncomment if SParkfun board
+#define _TTGO               // uncomment if TTGO board
 ```
-Make sure for that the PIN configuration for the LoRa LMIC are set correctly (lora.h)
-These pins are wired internaly on the Sparkfun board.
+The cycle count, how often a measurement is sent to the thingsnetwork in msec.:
 ```
-	// define RFM 95 pins
-	#define NSS 16
-	#define RXTX LMIC_UNUSED_PIN
-	#define RST 5
-	#define DIO1 26
-	#define DIO2 33
-	#define DIO3 32
+#define CYCLECOUNT   60000 
 ```
-## LoRa TTN keys
+#### LoRa TTN keys
 The device address and keys have to be set to the ones generated in the TTN console. Login in the TTN console and add your device.
-Choose activation mode OTAA and get the APPEUI, DEVEUI and APPKEY keys.
-Specify the keys in the file lora.h
+Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into this config file:
 ```
-	// specify here TTN keys 
-	#define APPEUI "0001020304050607"
-	#define DEVEUI "0000000000000001"
-	#define APPKEY "000102030405060708090A0B0C0D0E0F"
+#define APPEUI "0000000000000000"
+#define DEVEUI "0000000000000000"
+#define APPKEY "00000000000000000000000000000000"
 ```
-## Payload Interface
-A Lora message is max 50 bytes. In total 33 values are sent in one message. Therfore each value is compressed in an integer of 12 bits.  
 
-One upload message contains 3 times (for dBA, dBC and dbZ) the peak value, average value and the spectrum. The spectrum contains the dB values for the following frequency bands:
- 31.5Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz and 8kHz
+## Specification
 
-The TTN payload decoder produces the following JSON message:
+#### Sound Measuerment
+* sample frequency  MEMS microphone 22.628 khz
+* 18 bits per sample 
+* soundbuffer 2048 samples
+* FFT bands in bins of 11 Hz (22628 / 2048)
+* measurement cycle time 90 msec
+* one measurement contains
+  * spectrum 31.5Hz, 63Hz, 123Hz, 250Hz, 500 Hz, 1kHz, 2kHz, 4kHz and 8kHz
+  * average, maximum and minimum level
+
+#### Interface
+Every minute a message is composed from all measurements done in one minute, which contains the following values in dB.
+* 9 spectrum levels for dB(A)
+* 9 spectrum levels for dB(C)
+* 9 spectrum levels for dB(Z)
+* min, max, and average levels for dB(A)
+* min, max, and average levels for dB(C)
+* min, max, and average levels for dB(Z)
+
+The message is send in a compressed binary format to TTN. The TTN payload decoder converts the messsage to a readable JSON message.
+
+#### Example of a JSON message:
 ```
-{
   "la": {
-    "avg": 42.6,
-    "peak": 54.9,
+    "avg": 44.2,
+    "max": 50.4,
+    "min": 39.8,
     "spectrum": [
-      -13,
-      5.8,
-      26.9,
-      35.8,
-      35.9,
-      34.7,
-      33.8,
-      32.5,
-      31
+      22.2,
+      30.4,
+      37.1,
+      36,
+      35,
+      35.3,
+      34.3,
+      37.4,
+      30.5
     ]
   },
   "lc": {
-    "avg": 48.5,
-    "peak": 64.3,
+    "avg": 61.3,
+    "max": 72.5,
+    "min": 49.5,
     "spectrum": [
-      23.3,
-      31.2,
-      42.8,
-      44.4,
-      39.1,
-      34.7,
-      32.8,
-      31.8,
-      29.1
+      58.6,
+      55.8,
+      53,
+      44.6,
+      38.2,
+      35.3,
+      33.3,
+      36.6,
+      28.6
     ]
   },
   "lz": {
-    "avg": 48.7,
-    "peak": 64.4,
+    "avg": 63.4,
+    "max": 75.1,
+    "min": 50.3,
     "spectrum": [
-      26.3,
-      32,
-      43,
-      44.4,
-      39.1,
-      34.7,
-      32.6,
-      31.5,
-      32.1
+      61.6,
+      56.6,
+      53.2,
+      44.6,
+      38.2,
+      35.3,
+      33.1,
+      36.4,
+      31.6
     ]
   }
 }
 ```
 ## Example graphical output Sound Kit
-Below a graph of a sound measurement in my living room in dB(Z).
+Below a graph of a sound measurement in my living room in dB(A).
 In this graph some remarkable items are vissible:
-* blue line shows the peaks of the belling comtoise clock each half hour
-* visible noise of the dishing machine from 1:00 to 2:00
-* low noise of of the fridge, see the  63 Hz and 125 Hz line
+* blue line shows the max level of the belling comtoise clock each half hour
+* visible noise of the dishing machine from 0:30 to 1:30
+* noise of of the fridge the 125 Hz line
+* incrementing outside traffic (63 Hz) at 7.00
 
 ![alt Example output](images/grafana.png "Example output")
 
 The green blocks shows the average spectrum levels.
-
 This graph is made with Nodered, InfluxDb and Grafana.
 
 
