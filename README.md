@@ -24,10 +24,10 @@ This Soundkit sensor measures continuously audible sound by analyzing the data u
 ## Electronic components assembly
 The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
 #### Components
-* Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or LilyGO TTGO LoRa32 868MHz ESP32
+* Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or TTGO LoRa32 V1
 * I2S MEMS microphone SPH046 or I2S MEMS microphone NMP441
-* antenna ¼ lambda, e.g a wire of 8.4 cm length
-* power adapter 5V, 0,5A
+* antenna ¼ lambda, e.g a wire of 8.4 cm length or 868MHz Helical Antenna
+* power adapter 5V, 0.5A
 
 The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and the processor board (Sparkfun or TTGO):
 | SPH0645 | NMP442 |  |Sparkfun| TTGO |
@@ -51,8 +51,8 @@ Add the line in Arduino→preferences→Additional Boardsmanagers URL:
 ```
 Restart Arduino environment.
 
-In the Arduino menu Tools→Boards, choose Sparkfun Lora gateway board.
-If not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino  
+In the Arduino menu Tools→Boards, choose either Sparkfun Lora gateway board or TTGO LoRa32 V1.
+If Sparkfun Lora gateway is not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino  
 
 ## Libraries
 
@@ -66,12 +66,9 @@ I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
 Copy the two files “arduinoFFT.h” and arduinoFFT.ccp” to your .ino main directory
 
 ## Config file
-In the config,h file the processor board is defined either Sparkfun or TTGO
-```
-//#define _SPARKFUN         // uncomment if SParkfun board
-#define _TTGO               // uncomment if TTGO board
-```
-The cycle count, how often a measurement is sent to the thingsnetwork in msec.:
+In the config.h define some parameters.
+#### Cycle count
+The cycle count defines how often a measurement is sent to the thingsnetwork in msec.:
 ```
 #define CYCLECOUNT   60000 
 ```
@@ -171,10 +168,4 @@ In this graph some remarkable items are vissible:
 
 The green blocks shows the average spectrum levels.
 This graph is made with Nodered, InfluxDb and Grafana.
-
-
-
-
-
-
 
