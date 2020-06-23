@@ -37,22 +37,24 @@ const i2s_config_t i2s_config = {
 };
 
 // pin config MEMS microphone
-#if defined(_SPARKFUN) || defined(_ESP32)
-const i2s_pin_config_t pin_config = {
-  .bck_io_num   = 18,
-  .ws_io_num    = 23,
-  .data_out_num = -1,
-  .data_in_num  = 19
-};
-#endif
-
-#if defined(_TTGO)
+#if defined(ARDUINO_TTGO_LoRa32_V1)
+// define IO pins TTGO LoRa32 V1 for I2S for MEMS microphone
 const i2s_pin_config_t pin_config = {
   .bck_io_num   = 13,
   .ws_io_num    = 12,
   .data_out_num = -1,
   .data_in_num  = 35 //changed to 35, (21 is used by i2c)
 };
+#elif defined(ARDUINO_ESP32_DEV)
+// define IO pins Sparkfun for I2S for MEMS microphone
+const i2s_pin_config_t pin_config = {
+  .bck_io_num   = 18,
+  .ws_io_num    = 23,
+  .data_out_num = -1,
+  .data_in_num  = 19
+};
+#else
+  #error Unsupported board selection.
 #endif
 
 SoundSensor::SoundSensor() {
