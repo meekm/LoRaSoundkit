@@ -27,22 +27,24 @@
 #include "config.h"
 
 // RFM95 pin mappings
-#if defined(_SPARKFUN) || defined(_ESP32)
-const lmic_pinmap lmic_pins {
-  .nss = 16,
-  .rxtx = LMIC_UNUSED_PIN,
-  .rst = 5,
-  .dio = {26, 33, 32},
-};
-#endif
-
-#if defined(_TTGO)
+#if defined(ARDUINO_TTGO_LoRa32_V1)
+// define IO pins TTGO LoRa32 V1
 const lmic_pinmap lmic_pins {
   .nss = 18,
   .rxtx = LMIC_UNUSED_PIN,
   .rst = 14,
   .dio = {26, 33, 32},
 };
+#elif defined(ARDUINO_ESP32_DEV)
+// define IO pins Sparkfun
+const lmic_pinmap lmic_pins {
+  .nss = 16,
+  .rxtx = LMIC_UNUSED_PIN,
+  .rst = 5,
+  .dio = {26, 33, 32},
+};
+#else
+  #error Unsupported board selection.
 #endif
 
 const int      TxTIMEOUT = 10000;                   /// wait max TxTIMEOUT msec. after a join or send
