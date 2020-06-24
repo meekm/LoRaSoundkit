@@ -1,3 +1,4 @@
+// example of a json output message
 {
   "la": {
     "avg": 44.2,
