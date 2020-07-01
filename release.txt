@@ -1,0 +1,9 @@
+Changes in Version 2
+- update Readme, TTGO added, pinning diagram for different configurations, interface changed
+- config.h, contains all relevant parameters
+- SoundSensor class added, and lorasoundkit.ino cleaned
+- bin size is changed form 22Hz to 11Hz, mems buffer is changed from 1K to 2K
+- update class measurement, avg based on energy, peak is changed to max. and min, added
+- Lora timeout added
+- Lora downlink changed to one receivehandler callback call
+- payload decoder changed, LA and LC calculated from LZ (use Lora port 20)
