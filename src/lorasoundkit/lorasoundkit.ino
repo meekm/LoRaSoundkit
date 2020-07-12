@@ -39,8 +39,8 @@ void loracallback( unsigned int port, unsigned char* msg, unsigned int len) {
   printf("lora download message received port=%d len=%d\n", port, len);
 
   // change cycle count in seconds with a remote TTN download command 
-  // port is 1, byte 0 is low byte 1 is high byte
-  if( port == 1 && len >=2) {
+  // port is 20, byte 0 is low byte 1 is high byte
+  if( port == 20 && len >=2) {
     int value = msg[0] + 256 * msg[1];
     if( value >= 10 && value <= 600) {
        cycleCount = 1000 * value;
@@ -58,7 +58,7 @@ void setup(void) {
   digitalWrite( LED_BUILTIN, LOW);
 
   soundSensor.begin();
-//  lora.receiveHandler( loracallback);     // set LoRa receive handler (downnlink)
+  lora.receiveHandler( loracallback);     // set LoRa receive handler (downnlink)
   lora.sendMsg(0, NULL, 0);               // send LoRA Join message
 }
 
@@ -89,11 +89,11 @@ static void sendToTTN( Measurement& la, Measurement& lc, Measurement& lz) {
   }
  
   int len = i / 2 + (i % 2);
-  //printf( "messagelength=%d\n", len);
+  printf( "messagelength=%d\n", len);
 
   if ( len > 51)   // max TTN message length
     printf( "message to big length=%d\n", len);
-  lora.sendMsg( 20, payload, len );    // use port 20
+  lora.sendMsg( 21, payload, len );    // use port 21, protocol V2
   digitalWrite( LED_BUILTIN, LOW);
 }
 
