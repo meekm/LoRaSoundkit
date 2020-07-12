@@ -42,7 +42,7 @@ function Decoder(bytes, port) {
   }
 
 // decode payload
-  if (port === 20) {
+  if (port === 21) {
 
     var len = aWeighting.length;
 
