@@ -6,4 +6,4 @@ Changes in Version 2
 - update class measurement, avg based on energy, peak is changed to max. and min, added
 - Lora timeout added
 - Lora downlink changed to one receivehandler callback call
-- payload decoder changed, LA and LC calculated from LZ (use Lora port 20)
+- payload decoder changed, LA and LC calculated from LZ (use Lora port 21)
