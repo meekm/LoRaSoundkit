@@ -10,16 +10,19 @@
 */
 
 #include <Arduino.h>
-#include <driver/i2s.h>
 #include "config.h"
-
 #include "lora.h"
 #include "soundsensor.h"
 #include "measurement.h"
 
-// create soundsensor, Lora
+
+#if defined(ARDUINO_TTGO_LoRa32_V1)
+#include "oled.h"
+static Oled oled;
+#endif
+
+// create soundsensor
 static SoundSensor soundSensor;
-static LoRa lora;
 
 // Weighting lists
 static float aweighting[] = A_WEIGHTING;
@@ -33,6 +36,7 @@ static Measurement zMeasurement( zweighting);
 
 long milliCount = -1;
 long cycleCount = CYCLECOUNT;
+bool ttnOk = false;
 
 // LoRa receive handler (downnlink)
 void loracallback( unsigned int port, unsigned char* msg, unsigned int len) {
@@ -53,13 +57,21 @@ void loracallback( unsigned int port, unsigned char* msg, unsigned int len) {
 void setup(void) {
 
   Serial.begin(115200);
-  printf("Configuring I2S...\n");
+  delay(100);
+  printf("Setup..\n");
   pinMode(LED_BUILTIN, OUTPUT);       // lit if sending data
+  digitalWrite( LED_BUILTIN, HIGH);
+
+#if defined(ARDUINO_TTGO_LoRa32_V1)
+  oled.begin();
+#endif
+  soundSensor.begin();
+  loraBegin();
+  loraSetRxHandler( loracallback);        // set LoRa receive handler (downnlink
+  loraSend( 0, NULL, 0);                  // send LoRA Join message
   digitalWrite( LED_BUILTIN, LOW);
 
-  soundSensor.begin();
-  lora.receiveHandler( loracallback);     // set LoRa receive handler (downnlink)
-  lora.sendMsg(0, NULL, 0);               // send LoRA Join message
+  printf("End setup\n");
 }
 
 // compose message, and send it to TTN
@@ -93,7 +105,8 @@ static void sendToTTN( Measurement& la, Measurement& lc, Measurement& lz) {
 
   if ( len > 51)   // max TTN message length
     printf( "message to big length=%d\n", len);
-  lora.sendMsg( 21, payload, len );    // use port 21, protocol V2
+  //lora.sendMsg( 21, payload, len );    // use port 21, protocol V2
+  ttnOk = loraSend( 21, payload, len );
   digitalWrite( LED_BUILTIN, LOW);
 }
 
@@ -137,10 +150,13 @@ void loop(void) {
 
     sendToTTN( aMeasurement, cMeasurement, zMeasurement);
 
+#if defined(ARDUINO_TTGO_LoRa32_V1)
+   oled.showValues( aMeasurement.avg, cMeasurement.avg, zMeasurement.avg, ttnOk);
+#endif
+
     // reset counters etc.
     aMeasurement.reset();
     cMeasurement.reset();
     zMeasurement.reset();
   }
-  lora.process();
 }
