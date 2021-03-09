@@ -56,6 +56,7 @@ Restart Arduino environment.
 In the Arduino menu Tools→Boards, choose your board you want to use:
 * Select TTGO LoRa32-OLED V1 board or
 * Select Sparkfun LoRa Gateway 1-Channel board
+
 The Sounkit sourcecode supports both boards. If Sparkfun Lora gateway is not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino <br>
 
 
@@ -63,8 +64,9 @@ The Sounkit sourcecode supports both boards. If Sparkfun Lora gateway is not vis
 
 #### LMIC
 There are several LIMC LoRaWan libraries. I use the LMIC library from MCCI-Catena, because this one is currently best maintained. 
-Download https://github.com/mcci-catena/arduino-lmic and put it in your <arduino-path>\libraries\<br>
-Take care that you change the ferquency plan to Europe (if you are in Europe), because it is defaulted to the US. It can be changed in the file <arduino-path>\arduino-lmic-master\project_config\lmic_project_config.h<br>
+Download the library from https://github.com/mcci-catena/arduino-lmic and put it in your <arduino-path>\libraries\
+	
+Take care that you change the frequency plan to Europe (if you are in Europe), because it is defaulted to the US. It can be changed in the file <arduino-path>\arduino-lmic-master\project_config\lmic_project_config.h
 ```
 #define CFG_eu868 1
 ```
