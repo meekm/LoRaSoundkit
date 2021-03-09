@@ -21,8 +21,12 @@ This Soundkit sensor measures continuously audible sound by analyzing the data u
 
 > Sound Kit TTGO board
 
+<img src="images/ttgo-oled.jpg" alt="Sound Kit TTGO OLED display" width="300"/>
+
+> Sound Kit TTGO OLED display
+
 ## Electronic components assembly
-The software is based on ESP32 processor with Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
+The software is based on ESP32 processor with Lora module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
 The TTGO LoRa  board does have an OLED display, and will display the average dB(A), dB(C) and dB(z) levels.
 
 #### Components
