@@ -22,7 +22,9 @@ This Soundkit sensor measures continuously audible sound by analyzing the data u
 > Sound Kit TTGO board
 
 ## Electronic components assembly
-The software is based on ESP32 processor wtih Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
+The software is based on ESP32 processor with Lora RFM95 module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
+The TTGO LoRa  board does have an OLED display, and will display the average dB(A), dB(C) and dB(z) levels.
+
 #### Components
 * Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or TTGO LoRa32 V1
 * I2S MEMS microphone SPH046 or I2S MEMS microphone NMP441
@@ -51,19 +53,24 @@ Add the line in Arduino→preferences→Additional Boardsmanagers URL:
 ```
 Restart Arduino environment.
 
-In the Arduino menu Tools→Boards, choose either Sparkfun Lora gateway board or TTGO LoRa32 V1.
-If Sparkfun Lora gateway is not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino  
+In the Arduino menu Tools→Boards, choose your board you want to use:
+* Select TTGO LoRa32-OLED V1 board or
+* Select Sparkfun LoRa Gateway 1-Channel board
+The Sounkit sourcecode supports both boards. If Sparkfun Lora gateway is not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino <br>
+
 
 ## Libraries
 
 #### LMIC
-Install LMIC library from Matthys Kooijman (I did not use the advised LMIC from MCCI-Catena, because it uses US settings).
-Download https://github.com/matthijskooijman/arduino-lmic 
-and put it in your <arduino-path>\libraries\
-
+There are several LIMC LoRaWan libraries. I use the LMIC library from MCCI-Catena, because this one is currently best maintained. 
+Download https://github.com/mcci-catena/arduino-lmic and put it in your <arduino-path>\libraries\<br>
+Take care that you change the ferquency plan to Europe (if you are in Europe), because it is defaulted to the US. It can be changed in the file <arduino-path>\arduino-lmic-master\project_config\lmic_project_config.h<br>
+```
+#define CFG_eu868 1
+```
 #### Arduino FFT
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
-Copy the two files “arduinoFFT.h” and arduinoFFT.ccp” to your .ino main directory
+The two files “arduinoFFT.h” and arduinoFFT.ccp” are already in your .ino main directory
 
 ## Config file
 In the config.h define some parameters.
