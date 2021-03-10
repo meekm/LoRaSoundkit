@@ -86,8 +86,10 @@ Take care that you change the frequency plan to Europe (if you are in Europe), b
 
 #### Monochrome OLED library
 For the TTGO board, download the libraries below and put them in your [Arduino-path]\libraries
+```
 https://github.com/adafruit/Adafruit_SSD1306
 https://github.com/adafruit/Adafruit-GFX-Library
+```
 
 #### Arduino FFT
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
