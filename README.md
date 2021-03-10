@@ -49,7 +49,14 @@ The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and
 #### N.B.
 For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
 
-## Board configuration
+## Board configuration in PlatformIO
+
+Choose your board in the platformio.ini file and change "default_envs" in one of the two lines below: 
+* default_envs = ttgo
+* default_envs = sparkfun
+ 
+## Board configuration in Arduino
+
 Install ESP32 Arduino Core
 Add the line in Arduino→preferences→Additional Boardsmanagers URL:
 ```
@@ -66,6 +73,8 @@ The Sounkit sourcecode supports both boards. If Sparkfun Lora gateway is not vis
 
 ## Libraries
 
+If you develop in PlatformIO, you can skip this section, libraries and macros are defined in platformio.ini and are installed automatically.
+
 #### LMIC
 There are several LIMC LoRaWan libraries. I use the LMIC library from MCCI-Catena, because this one is currently best maintained. 
 Download the library from https://github.com/mcci-catena/arduino-lmic and put it in your [arduino-path]\libraries\
@@ -74,12 +83,18 @@ Take care that you change the frequency plan to Europe (if you are in Europe), b
 ```
 #define CFG_eu868 1
 ```
+
+#### Monochrome OLED library
+For the TTGO board, download the libraries below and put them in your [Arduino-path]\libraries
+https://github.com/adafruit/Adafruit_SSD1306
+https://github.com/adafruit/Adafruit-GFX-Library
+
 #### Arduino FFT
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
 The two files “arduinoFFT.h” and arduinoFFT.ccp” are already in your .ino main directory
 
 ## Config file
-In the config.h define some parameters.
+In the config.h some parameters are defined.
 #### Cycle count
 The cycle count defines how often a measurement is sent to the thingsnetwork in msec.:
 ```
