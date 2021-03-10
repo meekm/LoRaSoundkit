@@ -7,3 +7,9 @@ Changes in Version 2
 - Lora timeout added
 - Lora downlink changed to one receivehandler callback call
 - payload decoder changed, LA and LC calculated from LZ (use Lora port 21)
+
+Changes in Version 2.1
+- platformio.ini added for platformio environment (thanks Bertrik)
+- OLED display enabled for TTGO (added files oled.cpp and lora.h)
+- LMIC library changed from Matthys Kooijman to MCCI-Catena (better maintained)
+- lora.cpp and lora.h adapted
