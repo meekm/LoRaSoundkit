@@ -33,7 +33,7 @@ Measurement::Measurement( float* weighting) {
 }
 
 void Measurement::reset() {
-  avg = min = max = 0.0;
+  avg = 0.0;
   _n = 0;
   min = FLT_MAX;
   max = FLT_MIN;

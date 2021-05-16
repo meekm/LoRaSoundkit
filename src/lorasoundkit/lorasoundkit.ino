@@ -74,6 +74,19 @@ void setup(void) {
   printf("End setup\n");
 }
 
+// add 12 bits value to payloadbuffer
+int add12bitsToBuf( unsigned char* buf, int nibbleCount, short val) {
+  if ( nibbleCount % 2 == 0) {
+    buf[ nibbleCount / 2] = val >> 4;
+    buf[ nibbleCount / 2 + 1] = (val << 4) & 0xF0;
+  }
+  else {
+    buf[ nibbleCount / 2] |= ((val >> 8) & 0x0F);
+    buf[ nibbleCount / 2 + 1] = val;
+  }
+  return nibbleCount + 3;
+}
+
 // compose message, and send it to TTN
 // convert shorts to 12 bit integers, to save 25% space in th TTN message
 static void sendToTTN( Measurement& la, Measurement& lc, Measurement& lz) {
@@ -108,19 +121,6 @@ static void sendToTTN( Measurement& la, Measurement& lc, Measurement& lz) {
   //lora.sendMsg( 21, payload, len );    // use port 21, protocol V2
   ttnOk = loraSend( 21, payload, len );
   digitalWrite( LED_BUILTIN, LOW);
-}
-
-// add 12 bits value to payloadbuffer
-int add12bitsToBuf( unsigned char* buf, int nibbleCount, short val) {
-  if ( nibbleCount % 2 == 0) {
-    buf[ nibbleCount / 2] = val >> 4;
-    buf[ nibbleCount / 2 + 1] = (val << 4) & 0xF0;
-  }
-  else {
-    buf[ nibbleCount / 2] |= ((val >> 8) & 0x0F);
-    buf[ nibbleCount / 2 + 1] = val;
-  }
-  return nibbleCount + 3;
 }
 
 // Arduino Main Loop
