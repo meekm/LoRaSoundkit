@@ -8,16 +8,21 @@
 * [Config file](#Config-file)
 * [Specification](#Specification)
 * [Example graphical output Sound Kit](#Example-graphical-output-Sound-Kit)
+* [Last Updates](#Last-Updates)
+* [To Do](#To-Do)
 
 ## General
+This Soundkit is easy to build for a low cost price  (ca. 40 euro) and is therefore very suitable to be used for citizen sensing.
 
-This Soundkit sensor measures continuously audible sound by analyzing the data using FFT. The results are send each minute to the LoRa network. The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Also each minute the average, minimum and maximum levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
+This sensor measures continuously audible sound by analyzing the data using FFT process. The measured results are send in a report at regular time intervals to the LoRaWan network, where it can be picked up for visualization.
 
-<img src="images/soundkit.jpg" alt="Sound Kit Sparkfun board" width="200"/>
+No adjustments are needed, because the sensor uses a digital MEMS microphone. which is factory calibrated. Furthermore it can easily be connected to the community network, viz. it is independent of a home or office network.
 
-> Sound Kit Sparkfun board
+The sensor make use of the powerful ESP32 processor, which is a dual core processor. One core handles continuously the processing of audio, while the other core handles the LoRaWan communication.
 
-<img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="300"/>
+The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Each regular time interval the average, minimum and maximum levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
+
+img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="300"/>
 
 > Sound Kit TTGO board
 
@@ -26,50 +31,48 @@ This Soundkit sensor measures continuously audible sound by analyzing the data u
 > Sound Kit TTGO OLED display
 
 ## Electronic components assembly
-The software is based on ESP32 processor with Lora module. Two boards has been tested viz. Sparkfun LoRa board and TTGO LoRa board.
+The software is based on TTGO LoRa board, this board includes a ESP32 processor, a Lora RFM95 module, LoRa antenna.
 The TTGO LoRa  board does have an OLED display, and will display the average dB(A), dB(C) and dB(z) levels.
 
-#### Components
-* Sparkfun LoRa Gateway 1-channel ESP32 (used as Sensor), or TTGO LoRa32 V1
-* I2S MEMS microphone SPH046 or I2S MEMS microphone NMP441
-* antenna ¼ lambda, e.g a wire of 8.4 cm length or 868MHz Helical Antenna
-* power adapter 5V, 0.5A
-
-The table below shows the wiring between MEMS microphone (SPH0645 or NMP443) and the processor board (Sparkfun or TTGO):
-| SPH0645 | NMP442 |  |Sparkfun| TTGO |
-| ------- | ------ |--|--------|-------|
-| 3V | 3V |  <--> | 3V | 3V |
-| GND | GND |  <--> | GND | GND|
-| BCLK | SCK |  <--> | GPIO18 | GPIO13 |
-| DOUT | SD |  <--> | GPIO19 | GPIO35 |
-| LRCL | WS  |  <--> | GPIO23 | GPIO12 |
-|      | LR  |  GND |   |   |
-| SEL  |     |  not connected |   |   |
-
-#### N.B.
-For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3V supplied by the Sparkfun ESP gives in my situation some rumble in low frequencies. It can be uncoupled by extra 100nf and 100 uF or a separate 3.3V stabilzer.
-
-## Board configuration in PlatformIO
-
-Choose your board in the platformio.ini file and change "default_envs" in one of the two lines below: 
-* default_envs = ttgo
-* default_envs = sparkfun
+I have tested two MEMS microphones viz. SPH0645 and  INMP441.
+The SPH0645 was slightly better in low frequencies. This is more important if you want to measure db(C) and db(Z) levels.
  
-## Board configuration in Arduino
+#### Components 
+- Processor board: TTGO LoRa32 V1
+- I2S Microphone: SPH0645 or INMP441
+- power adapter 5V, 0.5A
 
+The table below shows the wiring between MEMS microphone (SPH0645 or INMP441) and the processor board TTGO:
+| SPH0645 | INMP441|        | TTGO   |
+| ------- | ------ |--------|--------|
+| 3V      | 3V     |  <-->  | 3V     |
+| GND     | GND    |  <-->  | GND    |
+| BCLK    | SCK    |  <-->  | GPIO13 |
+| DOUT    | SD     |  <-->  | GPIO35 |
+| LRCL    | WS     |  <-->  | GPIO12 |
+|         | LR     |  GND   |        |
+| SEL     | | not connected |        |
+
+**Remark 1:**
+The length of the wires between MEMS and TTGO -board should not exceed 15 cm and close to each other, or use a 5 wire flat cable.
+**Remark 2**
+For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3.3V supplied to the MEMS can cause some rumble in low frequencies. It can be improved by placing an extra 100nf and 100 uF condensator in parallel or a separate 3.3V stabilizer.
+
+## Board configuration
+**PlatformIO**
+Choose your board in the platformio.ini file and change "default_envs" in the line below: 
+```
+default_envs = ttgo
+```
+
+**Arduino**
 Install ESP32 Arduino Core
 Add the line in Arduino→preferences→Additional Boardsmanagers URL:
 ```
-	https://dl.espressif.com/dl/package_esp32_index.json
+https://dl.espressif.com/dl/package_esp32_index.json
 ```
 Restart Arduino environment.
-
-In the Arduino menu Tools→Boards, choose your board you want to use:
-* Select TTGO LoRa32-OLED V1 board or
-* Select Sparkfun LoRa Gateway 1-Channel board
-
-The Sounkit sourcecode supports both boards. If Sparkfun Lora gateway is not vissible check the presence of the Sparkfun variant file, see instructions at https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide/programming-the-esp32-with-arduino <br>
-
+In the Arduino menu Tools→Boards, choose the board TTGO LoRa32-OLED V1
 
 ## Libraries
 
@@ -77,9 +80,9 @@ If you develop in PlatformIO, you can skip this section, libraries and macros ar
 
 #### LMIC
 There are several LIMC LoRaWan libraries. I use the LMIC library from MCCI-Catena, because this one is currently best maintained. 
-Download the library from https://github.com/mcci-catena/arduino-lmic and put it in your [arduino-path]\libraries\
+Download the library from https://github.com/mcci-catena/arduino-lmic and put it in your \<arduino-path\>\libraries\
 	
-Take care that you change the frequency plan to Europe (if you are in Europe), because it is defaulted to the US. It can be changed in the file [arduino-path]\arduino-lmic-master\project_config\lmic_project_config.h
+Take care that you change the frequency plan to Europe (if you are in Europe), because it is defaulted to the US. It can be changed in the file \<arduino-path\>\arduino-lmic-master\project_config\lmic_project_config.h
 ```
 #define CFG_eu868 1
 ```
@@ -93,28 +96,31 @@ https://github.com/adafruit/Adafruit-GFX-Library
 
 #### Arduino FFT
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
-The two files “arduinoFFT.h” and arduinoFFT.ccp” are already in your .ino main directory
+The two files “arduinoFFT.h” and arduinoFFT.ccp” are already in your .ino main directory.
 
 ## Config file
 In the config.h some parameters are defined.
-#### Cycle count
-The cycle count defines how often a measurement is sent to the thingsnetwork in msec.:
+#### CycleTime
+The cycle count defines how often a measurement is sent to the thingsnetwork in seconds:
 ```
-#define CYCLECOUNT   60000 
+#define CYCLETIME   60
 ```
+For RIVM and sensor.community use 150
+
 #### LoRa TTN keys
-The device address and keys have to be set to the ones generated in the TTN console. Login in the TTN console and add your device.
-Choose activation mode OTAA and copy the APPEUI, DEVEUI and APPKEY keys into this config file:
+TTN V2 stops at the end of 2021, so my advice is use the TTN console V3 to set your keys.  
+Register your device, choose 'manually' and MAC version 1.03.
+Choose activation mode OTAA and copy the the (generated) APPEUI and APPKEY keys into this config file (config,h):
 ```
 #define APPEUI "0000000000000000"
-#define DEVEUI "0000000000000000"
 #define APPKEY "00000000000000000000000000000000"
 ```
+Note that unique DEVEUI is read from the TTGO ESP32 board id. The DEVEUI is displayed in the TTGO log during startup and is displayed on the OLED display. This value must be entered in the TTN console in the field DEVEUI.
 
 ## Specification
 
-#### Sound Measuerment
-* sample frequency  MEMS microphone 22.628 khz
+#### Sound Measurement
+* sample frequency  MEMS microphone 22.628 kHz
 * 18 bits per sample 
 * soundbuffer 2048 samples
 * FFT bands in bins of 11 Hz (22628 / 2048)
@@ -132,7 +138,7 @@ Every minute a message is composed from all measurements done in one minute, whi
 * min, max, and average levels for dB(C)
 * min, max, and average levels for dB(Z)
 
-The message is send in a compressed binary format to TTN. The TTN payload decoder converts the messsage to a readable JSON message.
+The message is send in a compressed binary format to TTN. The TTN payload decoder converts the message to a readable JSON message.
 
 #### Example of a JSON message:
 ```
@@ -199,3 +205,16 @@ In this graph some remarkable items are vissible:
 The green blocks shows the average spectrum levels.
 This graph is made with Nodered, InfluxDb and Grafana.
 
+## Last Updates
+Changed 15-8-2021
+  - MCCI Catena LoRa stack
+  - Worker loop changed (hang situation solved with TTN V3)
+  - OLED display added
+  - DEVEUI obtained from BoardID, (same SW for multiple sensors)
+  - use the TWO processor cores of ESP (one core for audio and one core for LoRa)
+  - DC offset MEMS compensated by moving average window
+  - payload compressed from 27 to 19 bytes
+  
+## To Do
+Advice sensor housing and microphone placement.
+Validate the sensor for communities (sensor.community and RIVM) by adding a test document.
