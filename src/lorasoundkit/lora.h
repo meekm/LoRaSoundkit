@@ -12,9 +12,14 @@
 #include <stdint.h> // uint8_t type
 
 // external functions 
-extern void loraBegin();
+extern void loraBegin(const char* appeui, const char* deveui, const char* appkey);
 extern void loraSetRxHandler( void (*callback)(unsigned int, uint8_t*, unsigned int));
 extern bool loraSend( int port, uint8_t* mydata, int len);
+extern bool loraConnected();
+extern void loraSetWorker( void (*worker)( void));
+//extern void loraSetTxComplete( void (*txComplete)(bool ok));
+extern void loraSleep( int seconds);
+extern void loraLoop( void);
 
 
 #endif // __LORA_H_

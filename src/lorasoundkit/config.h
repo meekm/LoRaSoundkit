@@ -1,6 +1,6 @@
 /** 
  * Define here your configuration
- * - cyclecount 
+ * - cycletime 
  * - LoRa TTN keys
  * Marcel Meek, May 2020
  * 
@@ -9,17 +9,16 @@
 #ifndef _CONFIG_h /* Prevent loading library twice */
 #define _CONFIG_h
 
-// define im milleseconds how often a message will be sent
-#define CYCLECOUNT   20000  //60000
+// define in seconds, how often a message will be sent
+#define CYCLETIME   60  // use 150 for RIVM and sensor.community project
 
 // specify here TTN keys
-//#define APPEUI "0000000000000000"
-//#define DEVEUI "0000000000000000"
-//#define APPKEY "00000000000000000000000000000000"
 
 #define APPEUI "70B3D57ED003ED46"
-#define DEVEUI "0000000000000001"
-#define APPKEY "80489B327CB6058C93614F5DC8187CD4"
+#define APPKEY "53A4419ACE4EABF7BE9E5FB0B8A16F27"
+// DEVEU is obtained from ESP board id
 
+//api key  (MQTT username)
+//NNSXS.6X7AUQOG4C7URKQ43OLIMZREFTITPGX7ZZ5UNVY.OYACRXFUVBUPIGCS7YN3TY6BOHYEEER5Z6BM3OLZ5PVRIG2TT4DQ
 
 #endif

@@ -19,7 +19,7 @@
 
 #include "soundsensor.h"
 #include "arduinoFFT.h"
-#include "config.h"
+
 
 const i2s_port_t I2S_PORT = I2S_NUM_0;
 
@@ -59,7 +59,9 @@ const i2s_pin_config_t pin_config = {
 
 SoundSensor::SoundSensor() {
   _fft = new arduinoFFT(_real, _imag, SAMPLES, SAMPLES);
-  _offset = 0;
+  _runningDC = 0.0;
+  _runningN = 0;
+  offset( 0.0);
 }
 
 SoundSensor::~SoundSensor(){
@@ -86,6 +88,7 @@ void SoundSensor::begin(){
 
 float* SoundSensor::readSamples(){
   // Read multiple samples at once and calculate the sound pressure
+   
   size_t num_bytes_read;
   _err = i2s_read(
     I2S_PORT,
@@ -95,8 +98,8 @@ float* SoundSensor::readSamples(){
     portMAX_DELAY
   );    // no timeout
   
-  // printf("bytes read %d\n", num_bytes_read);
-
+  //printf("bytes read %d\n", num_bytes_read);
+  
   if(_err != ESP_OK){
     printf("%d err\n",_err);
   }
@@ -121,7 +124,7 @@ float* SoundSensor::readSamples(){
 // convert WAV integers to float
 // convert 24 High bits from I2S buffer to float and divide * 256 
 // remove DC offset, necessary for some MEMS microphones 
-void SoundSensor::integerToFloat(int32_t * samples, float *vReal, float *vImag, uint16_t size) {
+/*void SoundSensor::integerToFloat(int32_t * samples, float *vReal, float *vImag, uint16_t size) {
   float sum = 0.0;
   for (uint16_t i = 0; i < size; i++) {
     int32_t val = (samples[i] >> 8);            // move 24 value bits on the correct place in a long
@@ -132,7 +135,29 @@ void SoundSensor::integerToFloat(int32_t * samples, float *vReal, float *vImag, 
   }
   _offset = sum / size;   //dc component
   //printf("DC offset %d\n", offset);
+}*/
+
+void SoundSensor::integerToFloat(int32_t * samples, float *vReal, float *vImag, uint16_t size) {
+  float sum = 0.0;
+  // calculate offset
+  for (uint16_t i = 0; i < size; i++) {
+    int32_t val = (samples[i] >> 8);            // move 24 value bits on the correct place in a long
+    vReal[i] = (float)val;
+    sum += vReal[i];
+  }
+  float offs = sum / (float)size;   //dc component
+  if( _runningN < 100)
+    _runningN++;
+  float newDC = _runningDC + (offs - _runningDC)/_runningN;
+  _runningDC = newDC;
+
+  for (uint16_t i = 0; i < size; i++) {
+    vReal[i] = (vReal[i] - newDC) / (256.0 * FACTOR / _factor);   // 30.0 adjustment
+    vImag[i] = 0.0;
+  }
+  //printf("DC offset %f\n", newDC);
 }
+
 
 // calculates energy from Re and Im parts and places it back in the Re part (Im part is zeroed)
 void SoundSensor::calculateEnergy(float *vReal, float *vImag, uint16_t samples)
@@ -141,6 +166,11 @@ void SoundSensor::calculateEnergy(float *vReal, float *vImag, uint16_t samples)
     vReal[i] = sq(vReal[i]) + sq(vImag[i]);
     vImag[i] = 0.0;
   }
+}
+
+// convert dB offset to factor
+void SoundSensor::offset( float dB) {
+   _factor = pow(10, dB / 20.0);    // convert dB to factor 
 }
 
 // sums up energy in whole octave bins

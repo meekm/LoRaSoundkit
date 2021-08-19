@@ -46,6 +46,7 @@ class SoundSensor {
     // Read multiple samples at once and calculate the sound pressure
     // returns energy in octave bands
     float* readSamples();
+    void offset( float dB);       ///< mic. correction in dB
 
   private:
     arduinoFFT   *_fft;               ///< FFT class
@@ -54,9 +55,10 @@ class SoundSensor {
     float         _imag[SAMPLES];
     float         _energy[OCTAVES];
     int32_t       _samples[BLOCK_SIZE];
-    int32_t       _offset;            ///< variable to compensate for DC-offset
-
-    esp_err_t _err;                   ///< Variable to store errors from ESP32
+    float         _runningDC = 0.0;   // compensate MEMS DC offset
+    int           _runningN = 0;      // running DSC offset average count
+    float         _factor;            ///< mic. correction factor
+    esp_err_t     _err;               ///< Variable to store errors from ESP32
 
     /// \brief Convert integer to float
     void integerToFloat(int32_t *samples, float *vReal, float *vImag, uint16_t size);
