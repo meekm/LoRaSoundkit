@@ -55,11 +55,11 @@ The table below shows the wiring between MEMS microphone (SPH0645 or INMP441) an
 
 **Remark 1:**
 
-The length of the wires between MEMS and TTGO -board should not exceed 15 cm and close to each other, or use a 5 wire flat cable.
+The length of the wires between MEMS and TTGO-board should not exceed 15 cm and ty the wires close to each other, or use a 5 wire flat cable.
 
 **Remark 2**
 
-For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3.3V supplied to the MEMS can cause some rumble in low frequencies. It can be improved by placing an extra 100nf and 100 uF condensator in parallel or a separate 3.3V stabilizer.
+For sound measurements lower then 30 dB, the power to the MEMS microphone must be very clean. The 3.3V supplied to the MEMS can cause some rumble in low frequencies. It can be improved by placing an extra 100nf and 100 uF capacitor in parallel or use a separate 3.3V stabilizer.
 
 ## Board configuration
 **PlatformIO**
@@ -221,4 +221,4 @@ Changed 15-8-2021
 ## To Do
 Advice for sensor housing and microphone placement.
 
-Validate the sensor for communities (sensor.community and RIVM) by providing a test document.
+Provide a test document to validate the sensor for use in communities (sensor.community and RIVM)
