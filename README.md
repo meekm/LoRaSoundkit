@@ -22,7 +22,7 @@ The sensor make use of the powerful ESP32 processor, which is a dual core proces
 
 The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Each regular time interval the average, minimum and maximum levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
 
-img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="300"/>
+<img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="300"/>
 
 > Sound Kit TTGO board
 
@@ -54,8 +54,10 @@ The table below shows the wiring between MEMS microphone (SPH0645 or INMP441) an
 | SEL     | | not connected |        |
 
 **Remark 1:**
+
 The length of the wires between MEMS and TTGO -board should not exceed 15 cm and close to each other, or use a 5 wire flat cable.
 **Remark 2**
+
 For sound measurements lower then 30 dB, the supply to the MEMS microphone must be very clean. The 3.3V supplied to the MEMS can cause some rumble in low frequencies. It can be improved by placing an extra 100nf and 100 uF condensator in parallel or a separate 3.3V stabilizer.
 
 ## Board configuration
