@@ -21,7 +21,7 @@ Oled::~Oled() {
   delete display;
 }
 
-void Oled::begin() {
+void Oled::begin( char *deveui) {
 
  //reset OLED display via software
   pinMode(OLED_RST, OUTPUT);
@@ -39,20 +39,22 @@ void Oled::begin() {
   display->clearDisplay();
   //display->setRotation( 2);  // rotate 180 degrees
   display->setTextColor(WHITE);
-  display->setTextSize(2);
-  display->setCursor(0, 0);  display->printf("Soundkit");
-  display->setCursor(0, 17);  display->printf("Starting");
+  display->setTextSize(1);
+  display->setCursor(0, 10);  display->printf("Soundkit Starting");
+  display->setCursor(0, 30);  display->printf("DEVEUI:");
+  display->setCursor(0, 40);  display->printf("%s", deveui);
   display->display();
 }
 
-void Oled::showValues( float la, float lc, float lz, bool ttnOk) {
+void Oled::showValues( Measurement& la, Measurement& lc, Measurement& lz, bool ttnOk) {
   display->clearDisplay();
   //display->setRotation( 2);  // rotate 180 degrees
   display->setTextColor(WHITE);
-  display->setTextSize(2);
-  display->setCursor(0, 0);  display->printf("dB(A) %.1f", la);
-  display->setCursor(0, 17);  display->printf("dB(C) %.1f", lc);
-  display->setCursor(0, 34);  display->printf("dB(Z) %.1f", lz);
-  display->setCursor(0, 51);  display->printf("TTN %s", (ttnOk) ? "ok" : "fail");
+  display->setTextSize(1);
+  display->setCursor(0, 0);  display->printf( "      avg  min  max");
+  display->setCursor(0, 10);  display->printf("dB(A) %.1f %.1f %.1f", la.avg, la.min, la.max), 
+  display->setCursor(0, 20);  display->printf("dB(C) %.1f %.1f %.1f", lc.avg, lc.min, lc.max);
+  display->setCursor(0, 30);  display->printf("dB(Z) %.1f %.1f %.1f", lz.avg, lz.min, lz.max);
+  display->setCursor(0, 50);  display->printf("TTN %s", (ttnOk) ? "ok" : "fail");
   display->display();
 }

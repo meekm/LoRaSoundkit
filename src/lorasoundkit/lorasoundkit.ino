@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------
-  De Slimme Meter DSM
-  Reads the Dutch Smart Meter and send data to LoRa network
+  LoRa Soundkit
+  Measures environtmentalsound and send data to LoRa network
 
   Author Marcel Meek
   Date 12/7/2020
@@ -50,6 +50,11 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite( LED_BUILTIN, LOW);   // off
 
+// get chip id, to be used for DEVEUI LoRa
+  uint64_t chipid = ESP.getEfuseMac();   //The chip ID is essentially its MAC address(length: 6 bytes).
+  sprintf(deveui, "%08X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
+  printf("deveui=%s\n", deveui);
+
   //create a task that will be executed in the Task1code() function, with priority 1 and executed on core 0
   xTaskCreatePinnedToCore(
                     Task0code,   /* Task function. */
@@ -59,11 +64,6 @@ void setup() {
                     1,           /* priority of the task */
                     &Task0,      /* Task handle to keep track of created task */
                     0);          /* pin task to core 0 */                  
-
-// get chip id, to be used for DEVEUI LoRa
-  uint64_t chipid = ESP.getEfuseMac();   //The chip ID is essentially its MAC address(length: 6 bytes).
-  sprintf(deveui, "%08X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
-  printf("deveui=%s\n", deveui);
 
 //initialize LoRa
   loraBegin( APPEUI, deveui, APPKEY);
@@ -82,7 +82,7 @@ void Task0code( void * pvParameters ){
   Serial.println(xPortGetCoreID());
 
 #if defined(ARDUINO_TTGO_LoRa32_V1)
-  oled.begin();
+  oled.begin(deveui);
 #endif
 
   // Weighting lists
@@ -121,7 +121,7 @@ void Task0code( void * pvParameters ){
       //zMeasurement.print();
 
 #if defined(ARDUINO_TTGO_LoRa32_V1)
-    oled.showValues( aMeasurement.avg, cMeasurement.avg, zMeasurement.avg, ttnOk);
+    oled.showValues( aMeasurement, cMeasurement, zMeasurement, ttnOk);
 #endif
 
       composeMessage( aMeasurement, cMeasurement, zMeasurement);
