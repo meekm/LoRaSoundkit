@@ -95,6 +95,7 @@ void Task0code( void * pvParameters ){
   static Measurement cMeasurement( cweighting);
   static Measurement zMeasurement( zweighting);
 
+  soundSensor.offset( MIC_OFFSET);   // set microphone dependent correction in dB
   soundSensor.begin();
 
   // main loop task 0
