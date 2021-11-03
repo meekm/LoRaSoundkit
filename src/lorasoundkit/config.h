@@ -12,6 +12,12 @@
 // define in seconds, how often a message will be sent
 #define CYCLETIME   60  // use 150 for RIVM and sensor.community project
 
+// set microphone dependant correction in dB
+// for SPH0645 define -1.8
+// for ICS43434 define 1.5
+// otherwise define 0.0
+#define MIC_OFFSET 0.0
+
 // specify here TTN keys
 
 #define APPEUI "70B3D57ED003ED46"
