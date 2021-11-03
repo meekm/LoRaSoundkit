@@ -33,7 +33,7 @@ The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves
 Several MEMS microphones can be used, the Soundkit is tested with SPH0645, INMP441 and ICS43434.
 The ICS43434 is adviced by Sensor.community, because the small headerboard can be assembled in a half inch pipe (13mm) fillled with resin in order to minimize audio resonance. Sound calibrators uses also this diameter size.
 
-<img src="images/ics43434.png" alt="ICS43434 microphone" width="200"/>
+<img src="images/ics43434.png" alt="ICS43434 microphone" width="150"/>
 
 > ICS43434 in pipe filled with resin
 
@@ -47,7 +47,7 @@ The ICS43434 is better in low levels, less noise.
  
 #### Components 
 - Processor board: TTGO LoRa32 V1
-- I2S Microphone: SPH0645 or INMP441
+- I2S Microphone: SPH0645 or INMP441 or ICS43434
 - power adapter 5V, 0.5A
 
 The table below shows the wiring between MEMS microphone (SPH0645 or INMP441 or ICS43434) and the processor board TTGO:
@@ -122,8 +122,8 @@ Set microphone dependent correction in dB
 ```
 #define MIC_OFFSET 0.0
 ```
-for SPH0645 use -1.8
-for ICS43434 use 1.5
+for SPH0645 use -1.8</br>
+for ICS43434 use 1.5</br>
 otherwise use 0.0
 
 
@@ -213,16 +213,15 @@ The message is send in a compressed binary format to TTN. The TTN payload decode
 }
 ```
 ## Example graphical output Sound Kit
-Below a graph of a sound measurement in my living room in dB(A).
+Below a heatmap and graph of a sound measurement on my balcony in quiet residential area. The values shown are in dB(Z)
 In this graph some remarkable items are vissible:
-* blue line shows the max level of the belling comtoise clock each half hour
-* visible noise of the dishing machine from 0:30 to 1:30
-* noise of of the fridge the 125 Hz line
-* incrementing outside traffic (63 Hz) at 7.00
+* birds at 4khz at sunrise and sunset
+* jet airplane at 250 Hz
+* morning rush (traffic) at 63 Hz
+Note that db(Z) levels shows a lot of noise in low frequencies, which is mostly not vissible in common db(A) measuremnts.
 
 ![alt Example output](images/grafana.png "Example output")
 
-The green blocks shows the average spectrum levels.
 This graph is made with Nodered, InfluxDb and Grafana.
 
 ## Last Updates
