@@ -12,7 +12,7 @@
 * [To Do](#To-Do)
 
 ## General
-This Soundkit is easy to build for a low cost price  (ca. 40 euro) and is therefore very suitable to be used for citizen sensing.
+This Soundkit is easy to build for a low cost price  (ca. 35 euro) and is therefore very suitable to be used for citizen sensing.
 
 This sensor measures continuously audible sound by analyzing the data using FFT process. The measured results are send in a report at regular time intervals to the LoRaWan network, where it can be picked up for visualization.
 
@@ -30,36 +30,44 @@ The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves
 
 > Sound Kit TTGO OLED display
 
+Several MEMS microphones can be used, the Soundkit is tested with SPH0645, INMP441 and ICS43434.
+The ICS43434 is adviced by Sensor.community, because the small headerboard can be assembled in a half inch pipe (13mm) fillled with resin in order to minimize audio resonance. Sound calibrators uses also this diameter size.
+
+<img src="images/ics43434.png" alt="ICS43434 microphone" width="200"/>
+
+> ICS43434 in pipe filled with resin
+
 ## Electronic components assembly
 The software is based on TTGO LoRa board, this board includes a ESP32 processor, a Lora RFM95 module, LoRa antenna.
 The TTGO LoRa  board does have an OLED display, and will display the average dB(A), dB(C) and dB(z) levels.
 
-I have tested two MEMS microphones viz. SPH0645 and  INMP441.
+Several MEMS microphones can be connected SPH0645, INMP441 or ICS43434
 The SPH0645 was slightly better in low frequencies. This is more important if you want to measure db(C) and db(Z) levels.
+The ICS43434 is better in low levels, less noise. 
  
 #### Components 
 - Processor board: TTGO LoRa32 V1
 - I2S Microphone: SPH0645 or INMP441
 - power adapter 5V, 0.5A
 
-The table below shows the wiring between MEMS microphone (SPH0645 or INMP441) and the processor board TTGO:
-| SPH0645 | INMP441|        | TTGO   |
-| ------- | ------ |--------|--------|
-| 3V      | 3V     |  <-->  | 3V     |
-| GND     | GND    |  <-->  | GND    |
-| BCLK    | SCK    |  <-->  | GPIO13 |
-| DOUT    | SD     |  <-->  | GPIO35 |
-| LRCL    | WS     |  <-->  | GPIO12 |
-|         | LR     |  GND   |        |
-| SEL     | | not connected |        |
+The table below shows the wiring between MEMS microphone (SPH0645 or INMP441 or ICS43434) and the processor board TTGO:
+| SPH0645 | INMP441|ICS43434|        | TTGO   |
+| ------- | ------ | ------ |--------|--------|
+| 3V      | 3V     | 3V     |  <-->  | 3V     |
+| GND     | GND    | GND    |  <-->  | GND    |
+| BCLK    | SCK    | SCK    |  <-->  | GPIO13 |
+| DOUT    | SD     | SD     |  <-->  | GPIO35 |
+| LRCL    | WS     | WS     |  <-->  | GPIO12 |
+|         | LR     | LR     |  GND   |        |
+| SEL     |        |        |not connected|   |
 
 **Remark 1:**
 
-The length of the wires between MEMS and TTGO-board should not exceed 15 cm and ty the wires close to each other, or use a 5 wire flat cable.
+The length of the wires between MEMS and TTGO-board should not exceed 15 cm and tie the wires close to each other, or use a 5 wire flat cable.
 
 **Remark 2**
 
-For sound measurements lower then 30 dB, the power to the MEMS microphone must be very clean. The 3.3V supplied to the MEMS can cause some rumble in low frequencies. It can be improved by placing an extra 100nf and 100 uF capacitor in parallel or use a separate 3.3V stabilizer.
+For sound measurements lower then 30 dB, the power to the MEMS microphone must be very clean. The 3.3V supplied to the MEMS can cause some rumble in low frequencies. It can be improved by placing an extra 100nf and 100 uF capacitor in parallel.
 
 ## Board configuration
 **PlatformIO**
@@ -110,6 +118,15 @@ The cycle count defines how often a measurement is sent to the thingsnetwork in 
 ```
 For RIVM and sensor.community use 150
 
+Set microphone dependent correction in dB
+```
+#define MIC_OFFSET 0.0
+```
+for SPH0645 use -1.8
+for ICS43434 use 1.5
+otherwise use 0.0
+
+
 #### LoRa TTN keys
 TTN V2 stops at the end of 2021, so my advice is use the TTN console V3 to set your keys.  
 Register your device, choose 'manually' and MAC version 1.03.
@@ -123,7 +140,7 @@ Note that unique DEVEUI is read from the TTGO ESP32 board id. The DEVEUI is disp
 ## Specification
 
 #### Sound Measurement
-* sample frequency  MEMS microphone 22.628 kHz
+* sample frequency MEMS microphone 22.628 kHz
 * 18 bits per sample 
 * soundbuffer 2048 samples
 * FFT bands in bins of 11 Hz (22628 / 2048)
