@@ -1,3 +1,13 @@
+Changes in Version 3
+- Test report added
+- MCCI Catena LoRa stack
+- Worker loop changed (hang situation solved with TTN V3)
+- OLED display added
+- DEVEUI obtained from BoardID, (same SW for multiple sensors)
+- use the TWO processor cores of ESP (one core for audio and one core for LoRa)
+- DC offset MEMS compensated by moving average window
+- payload compressed from 27 to 19 bytes
+
 Changes in Version 2
 - update Readme, TTGO added, pinning diagram for different configurations, interface changed
 - config.h, contains all relevant parameters
