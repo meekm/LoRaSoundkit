@@ -7,12 +7,13 @@
 * [Libraries](#Libraries)
 * [Config file](#Config-file)
 * [Specification](#Specification)
+* [Test Report](#Test-Report)
 * [Example graphical output Sound Kit](#Example-graphical-output-Sound-Kit)
 * [Last Updates](#Last-Updates)
 * [To Do](#To-Do)
 
 ## General
-This Soundkit is easy to build for a low cost price  (ca. 35 euro) and is therefore very suitable to be used for citizen sensing.
+This Soundkit is easy to build for a low cost price (ca. 35 euro) and is therefore very suitable to be used for citizen sensing.
 
 This sensor measures continuously audible sound by analyzing the data using FFT process. The measured results are send in a report at regular time intervals to the LoRaWan network, where it can be picked up for visualization.
 
@@ -42,7 +43,7 @@ The software is based on TTGO LoRa board, this board includes a ESP32 processor,
 The TTGO LoRa  board does have an OLED display, and will display the average dB(A), dB(C) and dB(z) levels.
 
 Several MEMS microphones can be connected SPH0645, INMP441 or ICS43434
-The SPH0645 was slightly better in low frequencies. This is more important if you want to measure db(C) and db(Z) levels.
+The SPH0645 was slightly better in low frequencies. This is more important if you want to measure dB(C) and dB(Z) levels.
 The ICS43434 is better in low levels, less noise. 
  
 #### Components 
@@ -58,7 +59,7 @@ The table below shows the wiring between MEMS microphone (SPH0645 or INMP441 or 
 | BCLK    | SCK    | SCK    |  <-->  | GPIO13 |
 | DOUT    | SD     | SD     |  <-->  | GPIO35 |
 | LRCL    | WS     | WS     |  <-->  | GPIO12 |
-|         | LR     | LR     |  GND   |        |
+|         | LR     | LR     |        | GND    |
 | SEL     |        |        |not connected|   |
 
 **Remark 1:**
@@ -140,6 +141,7 @@ Note that unique DEVEUI is read from the TTGO ESP32 board id. The DEVEUI is disp
 ## Specification
 
 #### Sound Measurement
+* Accuracy < 1 dB
 * sample frequency MEMS microphone 22.628 kHz
 * 18 bits per sample 
 * soundbuffer 2048 samples
@@ -150,7 +152,7 @@ Note that unique DEVEUI is read from the TTGO ESP32 board id. The DEVEUI is disp
   * average, maximum and minimum level
 
 #### Interface
-Every minute a message is composed from all measurements done in one minute, which contains the following values in dB.
+Every interval time (e.g. each minute) a message is composed from all measurements done in one interval, which contains the following values in dB.
 * 9 spectrum levels for dB(A)
 * 9 spectrum levels for dB(C)
 * 9 spectrum levels for dB(Z)
@@ -212,6 +214,11 @@ The message is send in a compressed binary format to TTN. The TTN payload decode
   }
 }
 ```
+
+## Test Report
+The [report](test/Test-report-TTGO-LoRa-Soundkit.pdf) describes three test sets: LoRa TTGO with ICS43434, LoRa TTGO withh SPH0645 and the Teensy4 set of the Sensor Community.
+The tests are executed with certified class 1 calibrator and soundlevel meter.
+
 ## Example graphical output Sound Kit
 Below a heatmap and graph of a sound measurement on my balcony in quiet residential area. The values shown are in dB(Z)
 In this graph some remarkable items are vissible:
@@ -233,8 +240,8 @@ Changed 15-8-2021
   - use the TWO processor cores of ESP (one core for audio and one core for LoRa)
   - DC offset MEMS compensated by moving average window
   - payload compressed from 27 to 19 bytes
+  - test report added
   
 ## To Do
 Advice for sensor housing and microphone placement.
 
-Provide a test document to validate the sensor for use in communities (sensor.community and RIVM)
