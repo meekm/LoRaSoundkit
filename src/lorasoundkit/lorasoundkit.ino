@@ -194,10 +194,11 @@ static bool composeMessage( Measurement& la, Measurement& lc, Measurement& lz) {
     printf( "message to big length=%d\n", payloadLength);  
 }
 
-// called from LoRa Task, each cycle time
+// called from LoRa Task (task1), each cycle time
 void loraWorker( ) {
   printf("Worker\n");
   digitalWrite( LED_BUILTIN, HIGH);
+  ttnOk = loraConnected();
   audioRequest = true;  // signal audiotask to compose an audio report
  
   // wait for Task 0 to be ready
@@ -205,7 +206,6 @@ void loraWorker( ) {
     loraLoop();    
   audioReady = false;
   
-  ttnOk = loraConnected();
   if( ttnOk) {
     printf("send message len=%d core=%d\n", payloadLength, xPortGetCoreID());
     loraSend( 22, (unsigned char*)payload, payloadLength);  // use port 22
