@@ -27,6 +27,7 @@ static Oled oled;
 static char deveui[32];
 static int cycleTime = CYCLETIME;
 static bool ttnOk = false;
+long millisWhenSendToLora = -1;
 
 // Task 1 is the default ESP core 1, this one handles the LoRa TTN messages
 // Task 0 is the added ESP core 0, this one handles the audio, (read MEMS, FFT process and compose message)
@@ -107,6 +108,12 @@ void Task0code( void * pvParameters ){
     aMeasurement.update( energy);
     cMeasurement.update( energy);
     zMeasurement.update( energy);
+
+#if defined(ARDUINO_TTGO_LoRa32_V1)
+    if (SHOWCYCLEPROGRESS) {
+      oled.showProgress( millis() - millisWhenSendToLora, cycleTime * 1000);
+    }
+#endif
  
     // calculate average and compose message
     if( audioRequest) {
@@ -126,6 +133,7 @@ void Task0code( void * pvParameters ){
 #endif
 
       composeMessage( aMeasurement, cMeasurement, zMeasurement);
+      millisWhenSendToLora = millis();
 
       // reset counters etc.
       aMeasurement.reset();
