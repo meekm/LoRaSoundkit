@@ -24,4 +24,7 @@
 #define APPKEY "53A4419ACE4EABF7BE9E5FB0B8A16F27"
 // DEVEU is obtained from ESP board id
 
+// Some aestethical options
+#define SHOWCYCLEPROGRESS   false
+
 #endif
