@@ -38,7 +38,7 @@ The ICS43434 is adviced by Sensor.community, because the small headerboard can b
 
 > ICS43434 in pipe filled with resin
 
-## Test Report Soundkit
+## Test Report
 The [test report can be found HERE](test/Test-report-TTGO-LoRa-Soundkit.pdf)  
 The test report desribes the tests of the Soundkit together with the Teensy4 soundsensor of the Sensor Community Germany.  
 Three test sets are used and the results are compared. The sets are:
