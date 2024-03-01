@@ -2,12 +2,12 @@
 #### Open source (hardware) sound level meter for the internet of things.
 
 * [General](#General)
+* [Test Report](#Test-Report)
 * [Electronic components assembly](#electronic-components-assembly)
 * [Board configuration](#Board-configuration)
 * [Libraries](#Libraries)
 * [Config file](#Config-file)
 * [Specification](#Specification)
-* [Test Report](#Test-Report)
 * [Example graphical output Sound Kit](#Example-graphical-output-Sound-Kit)
 * [Last Updates](#Last-Updates)
 * [To Do](#To-Do)
@@ -37,6 +37,15 @@ The ICS43434 is adviced by Sensor.community, because the small headerboard can b
 <img src="images/ics43434.png" alt="ICS43434 microphone" width="150"/>
 
 > ICS43434 in pipe filled with resin
+
+## Test Report Soundkit
+The [test report can be found HERE](test/Test-report-TTGO-LoRa-Soundkit.pdf)  
+The test report desribes the tests of the Soundkit together with the Teensy4 soundsensor of the Sensor Community Germany.  
+Three test sets are used and the results are compared. The sets are:
+- Soundkit LoRa TTGO with ICS43434
+- Soundkit LoRa TTGO with SPH0645
+- Soundsensor Teensy4 of the Sensor Community Germany.
+The tests are executed with certified class 1 calibrator and soundlevel meter.
 
 ## Electronic components assembly
 The software is based on TTGO LoRa board, this board includes a ESP32 processor, a Lora RFM95 module, LoRa antenna.
@@ -214,11 +223,6 @@ The message is send in a compressed binary format to TTN. The TTN payload decode
   }
 }
 ```
-
-## Test Report
-The [report](test/Test-report-TTGO-LoRa-Soundkit.pdf) describes three test sets: LoRa TTGO with ICS43434, LoRa TTGO withh SPH0645 and the Teensy4 set of the Sensor Community.
-The tests are executed with certified class 1 calibrator and soundlevel meter.
-
 ## Example graphical output Sound Kit
 Below a heatmap and graph of a sound measurement on my balcony in quiet residential area. The values shown are in dB(Z)
 In this graph some remarkable items are vissible:
