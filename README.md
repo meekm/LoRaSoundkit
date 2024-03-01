@@ -45,6 +45,7 @@ Three test sets are used and the results are compared. The sets are:
 - Soundkit LoRa TTGO with ICS43434
 - Soundkit LoRa TTGO with SPH0645
 - Soundsensor Teensy4 of the Sensor Community Germany.
+
 The tests are executed with certified class 1 calibrator and soundlevel meter.
 
 ## Electronic components assembly
