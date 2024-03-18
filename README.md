@@ -3,8 +3,7 @@
 
 * [General](#General)
 * [Electronic components assembly](#electronic-components-assembly)
-* [Board configuration](#Board-configuration)
-* [Libraries](#Libraries)
+* [Software Build](#Software-Build)
 * [Config file](#Config-file)
 * [Specification](#Specification)
 * [Test Report](#Test-Report)
@@ -67,21 +66,21 @@ The length of the wires between MEMS and TTGO-board should not exceed 15 cm and 
 
 For sound measurements lower then 30 dB, the power to the MEMS microphone must be very clean. The 3.3V supplied to the MEMS can cause some rumble in low frequencies. It can be improved by placing an extra 100nf and 100 uF capacitor in parallel.
 
-## Board configuration
-**PlatformIO**
+## Software Build
+The sources are developed and compiled by Visual Code with the PlatformIO. 
+### Board configuration
 The platformio.ini file is configured for the LilyGO TTGO T3 LoRa32 board.
 ```
 [env:ttgo-lora32-v21]
 ```
-## Libraries
-
+### Libraries
 Libraries are installed automatically. The macros and libs are defined in platformio.ini. The following libraries are used in this project:
 - espressif32@3.5.0
 - mcci-catena/MCCI LoRaWAN LMIC library@ 4.1.1,
 - adafruit/Adafruit GFX Library and adafruit/Adafruit SSD1306
 
 #### LMIC
-Take care that you change the frequency plan to Europe (if you are in Europe), because it is defaulted to the US. It must be changed in the file .pio\libdeps\ttgo-lora32-v21\MCCI LoRaWAN LMIC library\project_config\lmic_project_config.h
+Take care that you change the frequency plan to Europe (if you are in Europe), because it is defaulted to the US. It must be changed in the local library MCCI LoRaWAN in the file project_config\lmic_project_config.h
 ```
 #define CFG_eu868 1
 ```
