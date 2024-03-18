@@ -1,3 +1,9 @@
+Changes in Version 4
+- Sources adapted for LilyGO TTGO T3 LoRa32 board (10dB better radio performance)
+- Sources adapted for VC PlatformIO (arduino IDE support not tested)
+- During a TTN connect phase, the I2S MEMS driver is stopped, because it gives Rx radio interference
+- The update of the OLED display is moved from the sound thread to the main thread.
+
 Changes in Version 3
 - Test report added
 - MCCI Catena LoRa stack
