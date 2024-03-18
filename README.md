@@ -8,6 +8,7 @@
 * [Config file](#Config-file)
 * [Specification](#Specification)
 * [Test Report](#Test-Report)
+* [TTN message interface](#TTN-message-interface)
 * [Example graphical output Sound Kit](#Example-graphical-output-Sound-Kit)
 * [Last Updates](#Last-Updates)
 * [To Do](#To-Do)
@@ -23,14 +24,14 @@ The sensor make use of the powerful ESP32 processor, which is a dual core proces
 
 The sensor measures  audible spectrum from 31.5 Hz to 8 kHz divided in 9 octaves. Each regular time interval the average, minimum and maximum levels are calculated for the 3 weighting curves dB(A), dB(C) and db(Z).
 
-<img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="300"/>
+<img src="images/ttgo.jpg" alt="Sound Kit TTGO board" width="400"/>
 
 > Sound Kit TTGO OLED display
 
 Several MEMS microphones can be used, the Soundkit is tested with SPH0645 and ICS43434.
 The ICS43434 is adviced by Sensor.community, because the small headerboard can be assembled in a half inch pipe (13mm) fillled with resin in order to minimize audio resonance. Sound calibrators uses also this diameter size.
 
-<img src="images/ics43434.png" alt="ICS43434 microphone" width="150"/>
+<img src="images/ics43434.jpg" alt="ICS43434 microphone" width="150"/>
 
 > ICS43434 in pipe filled with resin
 
@@ -74,15 +75,17 @@ The platformio.ini file is configured for the LilyGO TTGO T3 LoRa32 board.
 ```
 ## Libraries
 
-Libraries and macros are defined in platformio.ini and are installed automatically. The library uses are
-espressif32 3.5.0, mcci-catena/MCCI LoRaWAN LMIC library@ 4.1.1, adafruit/Adafruit GFX Library and adafruit/Adafruit SSD1306
+Libraries are installed automatically. The macros and libs are defined in platformio.ini. The following libraries are used in this project:
+- espressif32@3.5.0
+- mcci-catena/MCCI LoRaWAN LMIC library@ 4.1.1,
+- adafruit/Adafruit GFX Library and adafruit/Adafruit SSD1306
 
 #### LMIC
-Take care that you change the frequency plan to Europe (if you are in Europe), because it is defaulted to the US. It can be changed in the file .pio\libdeps\ttgo-lora32-v21\MCCI LoRaWAN LMIC library\project_config\lmic_project_config.h
+Take care that you change the frequency plan to Europe (if you are in Europe), because it is defaulted to the US. It must be changed in the file .pio\libdeps\ttgo-lora32-v21\MCCI LoRaWAN LMIC library\project_config\lmic_project_config.h
 ```
 #define CFG_eu868 1
 ```
-and the line 
+and add the next line at the end of the file
 ```
 #define hal_init LMICHAL_init
 ```
@@ -141,8 +144,8 @@ Three test sets are used and the results are compared. The sets are:
 
 The tests are executed with certified class 1 calibrator and soundlevel meter.
 
-#### Interface
-Every interval time (e.g. each minute) a message is composed from all measurements done in one interval, which contains the following values in dB.
+## TTN message interface
+Every interval time (e.g. each 2 minutes) a message is composed from all measurements done in one interval, which contains the following values in dB.
 * 9 spectrum levels for dB(A)
 * 9 spectrum levels for dB(C)
 * 9 spectrum levels for dB(Z)
@@ -152,7 +155,7 @@ Every interval time (e.g. each minute) a message is composed from all measuremen
 
 The message is send in a compressed binary format to TTN. The TTN payload decoder converts the message to a readable JSON message.
 
-#### Example of a JSON message:
+### Example of a JSON message:
 ```
   "la": {
     "avg": 44.2,
