@@ -44,6 +44,7 @@ class SoundSensor {
     void begin();
     void start();
     void stop();
+    bool running()  { return _i2s; }
     
     // Read multiple samples at once and calculate the sound pressure
     // returns energy in octave bands
@@ -61,6 +62,7 @@ class SoundSensor {
     int           _runningN = 0;      // running DSC offset average count
     float         _factor;            ///< mic. correction factor
     esp_err_t     _err;               ///< Variable to store errors from ESP32
+    boolean       _i2s;
 
     /// \brief Convert integer to float
     void integerToFloat(int32_t *samples, float *vReal, float *vImag, uint16_t size);

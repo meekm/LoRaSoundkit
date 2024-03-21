@@ -36,14 +36,14 @@ const i2s_config_t i2s_config = {
 };
 
 // pin config MEMS microphone
-#define ARDUINO_TTGO_LoRa32_V1
-#if defined(ARDUINO_TTGO_LoRa32_V1)
+#define TTGO_LORA32_V21
+#if defined(TTGO_LORA32_V21)
 // define IO pins TTGO LoRa32 V1 for I2S for MEMS microphone
 const i2s_pin_config_t pin_config = {
-  .bck_io_num   = 00,  // v1 = 13, v2 = 34 ?
-  .ws_io_num    = 12,  // v1 = 12
+  .bck_io_num   = 00, 
+  .ws_io_num    = 12,  
   .data_out_num = -1,
-  .data_in_num  = 35 //v1 = 35 changed to 35, (21 is used by i2c)
+  .data_in_num  = 35 
 };
 #elif defined(ARDUINO_ESP32_DEV)
 // define IO pins Sparkfun for I2S for MEMS microphone
@@ -62,9 +62,11 @@ SoundSensor::SoundSensor() {
   _runningDC = 0.0;
   _runningN = 0;
   offset( 0.0);
+  _i2s = false;
 }
 
 SoundSensor::~SoundSensor(){
+  i2s_driver_uninstall(  I2S_PORT);
   delete _fft;
 }
 
@@ -92,11 +94,14 @@ void SoundSensor::begin(){
 void SoundSensor::start() {
   printf("i2s_start\n");
   i2s_start( I2S_PORT);
+  _i2s = true;
 }
 
 void SoundSensor::stop() {
   printf("i2s_stop\n");
+  _i2s = false;
   i2s_stop( I2S_PORT);
+ 
 }
 
 float* SoundSensor::readSamples(){

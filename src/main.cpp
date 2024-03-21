@@ -28,14 +28,8 @@
 #include "soundsensor.h"
 #include "measurement.h"
 #include "config.h"
-
-#define ARDUINO_TTGO_LoRa32_V1
-#if defined(ARDUINO_TTGO_LoRa32_V1)
 #include "oled.h"
 static Oled oled;
-#endif
-// v2 = 25,  v1 = 2
-#define  LED_BUILTIN 25
 
 // forward declarations
 void Task0code( void * pvParameters );
@@ -44,26 +38,28 @@ void loraWorker( );
 static void composeMessage( Measurement& la, Measurement& lc, Measurement& lz);
 
 static int cycleTime = CYCLETIME;
+static char deveui[40];
+
 // Weighting lists
   static float aweighting[] = A_WEIGHTING;
   static float cweighting[] = C_WEIGHTING;
   static float zweighting[] = Z_WEIGHTING;
 
-  // measurement buffers
+// measurement buffers, filled by core 0, read by core 1
   static Measurement aMeasurement( aweighting);
   static Measurement cMeasurement( cweighting);
   static Measurement zMeasurement( zweighting);
-  static bool sound = false;
-
+ 
 // Task 1 is the default ESP core 1, this one handles the LoRa TTN messages
 // Task 0 is the added ESP core 0, this one handles the audio, (read MEMS, FFT process and compose message)
 TaskHandle_t Task0;
 
 // task semaphores
-bool audioRequest = false;
-bool audioReady = false;
+static bool audioRequest = false;
+static bool audioReady = false;
+static bool sound = false;
 
-// payloadbuffer, filled by core 0, read by core 1
+// payloadbuffer
 unsigned char payload[80];
 int payloadLength = 0;
 
@@ -79,15 +75,14 @@ static SoundSensor soundSensor;
 
 // get chip id, to be used for DEVEUI LoRa
   uint64_t chipid = ESP.getEfuseMac();   //The chip ID is essentially its MAC address(length: 6 bytes).
-  sprintf(oled.deveui, "%08X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
-  printf("deveui=%s\n", oled.deveui);
-  oled.status = "starting";
+  sprintf( deveui, "%08X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
+  printf("deveui=%s\n", deveui);
 
-  #if defined(ARDUINO_TTGO_LoRa32_V1)
-    oled.begin( &aMeasurement, &cMeasurement, &zMeasurement);
-    //oled.showStatus();
-    oled.showValues();
-  #endif
+  oled.begin();
+  oled.deveui = deveui; 
+  oled.values( &aMeasurement, &cMeasurement, &zMeasurement);
+  oled.status = "Starting";
+  oled.update( );
 
   //create a task that will be executed in the Task1code() function, with priority 1 and executed on core 0
   xTaskCreatePinnedToCore(
@@ -99,15 +94,27 @@ static SoundSensor soundSensor;
                     &Task0,      // Task handle to keep track of created task
                     0);          // pin task to core 0                 
 
+
+// do testread for 2 seconds
+  sound = true;
+  delay(2000);
+  audioRequest = true;
+  while( !audioReady) 
+    delay(10);
+  audioReady = false;
+  sound = false;
+  oled.update();
+ 
 //initialize LoRa
-  loraBegin( APPEUI, oled.deveui, APPKEY);
+  loraBegin( APPEUI, deveui, APPKEY);
   loraSetRxHandler( loracallback);    // set LoRa receive handler (downnlink)
   loraSetWorker( loraWorker);         // set Worker handler
   loraSleep(1);                      // start worker 
   Serial.println("end setup");
 } 
 
-//Task0code: handle sound measurements
+// Handle sound measurements
+// Note this is anoher theread running in another Core!!!!
 void Task0code( void * pvParameters ){
   Serial.print("Task0 running on core ");
   Serial.println(xPortGetCoreID());
@@ -116,37 +123,30 @@ void Task0code( void * pvParameters ){
   // main loop task 0
   while( true){
 
-    // if Lora connection lost or when in joining phase, disable i2s device and wait until connected
-    // we stop here the i2s interface because it disturbs the TTN joining phase)
-    while( !loraConnected() ) {  
-      if( sound) {
-         soundSensor.stop();
-         sound = false;
- //        oled.status = "Disconnected";
+    if( sound ) { 
+      if( !soundSensor.running())
+        soundSensor.start();
+      // read chunk form MEMS and perform FFT, and sum energy in octave bins
+      float* energy = soundSensor.readSamples();
+
+      // update
+      aMeasurement.update( energy);
+      cMeasurement.update( energy);
+      zMeasurement.update( energy);
+
+      // calculate audio result on request
+      if( audioRequest) {
+        audioRequest = false;
+        aMeasurement.calculate();
+        cMeasurement.calculate();
+        zMeasurement.calculate();
+        audioReady = true;    // signal worker task that audio result is ready
       }
-      delay(1000);
     }
-  
-    if( !sound) {    // status is changed from not-connected to connected
-      soundSensor.start();
-      sound  = true;
-      //oled.status = "Connected";
-    }
-    // read chunk form MEMS and perform FFT, and sum energy in octave bins
-    float* energy = soundSensor.readSamples();
-
-    // update
-    aMeasurement.update( energy);
-    cMeasurement.update( energy);
-    zMeasurement.update( energy);
-
-    // calculate audio result on request
-    if( audioRequest) {
-      audioRequest = false;
-      aMeasurement.calculate();
-      cMeasurement.calculate();
-      zMeasurement.calculate();
-      audioReady = true;    // signal LoRa worker task that audio result is ready
+    else {
+      if( soundSensor.running())
+        soundSensor.stop();
+      delay(100);  // do nothing
     }
   }
 }
@@ -211,52 +211,54 @@ void loraWorker( ) {
   printf("Worker\n");
 
   if( loraConnected()) { 
-    oled.status = "Connected";
+    sound = true;
+    oled.status = "TTN Connected";
     audioRequest = true;  // signal audiotask to compose an audio report
    
     while( !audioReady)  // wait for Task 0 to be ready
       loraLoop();    
     audioReady = false;
-
     digitalWrite( LED_BUILTIN, HIGH);
-    printf("send message len=%d core=%d\n", payloadLength, xPortGetCoreID());
-
+   
           // save values for oled display
-    oled.showValues();
+    oled.update();
     // debug info, should be comment out
     //aMeasurement.print();
     //cMeasurement.print();
     //zMeasurement.print();
     composeMessage( aMeasurement, cMeasurement, zMeasurement);
+    printf("send message len=%d core=%d\n", payloadLength, xPortGetCoreID());
     loraSend( 22, (unsigned char*)payload, payloadLength);  // use port 22
-  }
-  else {   // lora not connected so do a rejoin
-    digitalWrite( LED_BUILTIN, HIGH);
-    printf("loraJoin\n");
-    oled.status = "Joining..";
-    #if defined(ARDUINO_TTGO_LoRa32_V1)
-      //oled.showStatus();
-      oled.showValues();
-    #endif
-    loraJoin(); 
-  }
-
-  // wait until lora request is ready within timeout
-  long start = millis();
-  while ( !loraTxReady() && millis() - start < 20000  )
-     loraLoop(); 
-  
-  digitalWrite( LED_BUILTIN, LOW);
-  if( loraConnected()) {  // connected phase
+    // wait until lora request is ready within timeout
+    //long start = millis();
+    while ( !loraTxReady() /*&& millis() - start < 100000 */ )
+      loraLoop(); 
+    digitalWrite( LED_BUILTIN, LOW);
     loraSleep( cycleTime);
   }
-  else {  // join phase
-    oled.status = "Join Failed";
-    #if defined(ARDUINO_TTGO_LoRa32_V1)
-      //oled.showStatus();
-      oled.showValues();
-    #endif
-    loraSleep( 10);  // do a short sleep during in joinig phase
+  else {   // lora not connected so do a (re)join
+    sound = false;
+    digitalWrite( LED_BUILTIN, HIGH);
+    printf("loraJoin\n");
+    oled.status = "TTN Joining..";
+    oled.update();
+    loraJoin(); 
+   // wait until lora request is ready within timeout
+    //long start = millis();
+    while ( !loraTxReady() /*&& millis() - start < 1000*/  )
+      loraLoop(); 
+    digitalWrite( LED_BUILTIN, LOW);
+    if( loraConnected()) { 
+      oled.status = "TTN Connected"; 
+      sound = true;
+      oled.update();
+      loraSleep( cycleTime);
+    }
+    else {
+      oled.status = "TTN Join Failed";
+      oled.update();
+      loraSleep( 10);  // sleep a short time to retry a join again
+    }
   }
 }
 

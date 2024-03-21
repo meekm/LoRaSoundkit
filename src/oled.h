@@ -17,16 +17,15 @@ class Oled {
   public:
     Oled();
     ~Oled();
-    void begin( Measurement* a, Measurement* c, Measurement* z);
-    void showStatus();
-    void showValues();
+    void begin(); 
+    void values( Measurement* la, Measurement* lc, Measurement* lz);
+    void update();
 
-
-    char* status;
-    char deveui[40];
+    const char* status;
+    const char* deveui;
 
   private:
-    Measurement *_a, *_c, *_z;
+    Measurement *_la, *_lc, *_lz;
     Adafruit_SSD1306 *display;
 }; 
 
