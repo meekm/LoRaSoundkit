@@ -80,14 +80,14 @@ Libraries are installed automatically. The macros and libs are defined in platfo
 - adafruit/Adafruit GFX Library and adafruit/Adafruit SSD1306
 
 #### LMIC
-Take care that you change the frequency plan to Europe (if you are in Europe), because it is defaulted to the US. It must be changed in the local library MCCI LoRaWAN in the file project_config\lmic_project_config.h
+The frequency plan in MCCI LoRaWAN LMIC library is defaulted to US. In the platformio.ini it is overruled to Europe by the build flags:
 ```
-#define CFG_eu868 1
+build_flags =
+  -D ARDUINO_LMIC_PROJECT_CONFIG_H_SUPPRESS
+  -D CFG_eu868=1
+  -D CFG_sx1276_radio=1
 ```
-and add the next line at the end of the file
-```
-#define hal_init LMICHAL_init
-```
+
 #### Arduino FFT
 I used the https://www.arduinolibraries.info/libraries/arduino-fft library.
 The two files “arduinoFFT.h” and arduinoFFT.ccp” are already present in your source directory.
