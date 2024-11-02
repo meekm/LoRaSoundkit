@@ -16,7 +16,7 @@
 // for SPH0645 define -1.8
 // for ICS43434 define 1.5
 // otherwise define 0.0
-#define MIC_OFFSET 0.0
+#define MIC_OFFSET 1.5
 
 // specify here TTN keys
 
