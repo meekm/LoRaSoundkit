@@ -119,7 +119,8 @@ void Task0code( void * pvParameters ){
   Serial.print("Task0 running on core ");
   Serial.println(xPortGetCoreID());
   soundSensor.begin();
-
+  soundSensor.offset( MIC_OFFSET );
+  
   // main loop task 0
   while( true){
 
